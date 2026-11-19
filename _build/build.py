@@ -236,11 +236,11 @@ def write(path,html_):
 def nodash(s): return s.replace(' \u2014 ',', ').replace('\u2014',', ')
 
 LOC='Oregon, WI'
-H1={'chiropractic':f'Chiropractic Adjustments with a Chiropractor in {LOC}','pediatric':f'Kids Chiropractor in {LOC}','prenatal':f'Prenatal Chiropractor in {LOC}',
- 'wellness-care':f'Wellness Care Chiropractor in {LOC}','massage-therapy':f'Massage Therapy at Your Chiropractor in {LOC}','nutrition':f'Nutrition Support from Your Chiropractor in {LOC}',
+H1={'chiropractic':f'Gonstead Chiropractic in {LOC}','pediatric':f'Kids Chiropractor in {LOC}','prenatal':f'Prenatal Chiropractor in {LOC}',
+ 'wellness-care':f'Wellness Care in {LOC}','massage-therapy':f'Massage Therapy in {LOC}','nutrition':f'Nutrition Support in {LOC}',
  'headaches':f'Headache and Migraine Chiropractor in {LOC}','whiplash':f'Whiplash and Auto Injury Chiropractor in {LOC}',
- 'gonstead-system':f'The 5-Part Analysis Used by Your Chiropractor in {LOC}','founder-of-gonstead':f'The Founder of the Method Used by Your Chiropractor in {LOC}',
- 'first-visit':f'Your First Visit to Our Chiropractor in {LOC}','second-visit':f'Your Second Visit to Our Chiropractor in {LOC}','follow-up-visit':f'Follow-Up Visits with Our Chiropractor in {LOC}'}
+ 'gonstead-system':'The Gonstead System: A 5-Part Analysis','founder-of-gonstead':'Dr. Clarence Gonstead, Founder of the Gonstead Technique',
+ 'first-visit':'Your First Visit','second-visit':'Your Second Visit: Report of Findings','follow-up-visit':'Follow-Up Visits'}
 for _c in ['back-pain','neck-pain','sciatica','disc-injury','shoulder-pain','hip-pain','knee-pain','sports-injury','work-injury','scoliosis','arthritis']:
     H1[_c]=NAV_NAMES[_c]+f' Chiropractor in {LOC}'
 def catalog_page(kind,slug,d):
@@ -426,21 +426,21 @@ def about():
 <figure><img src="{U('/assets/images/dr-kratz-front-desk.jpg')}" alt="Dr. Kratz at the front desk" loading="lazy"><figcaption>{B['doc_short']} at the front desk</figcaption></figure>
 <figure><img src="{U('/assets/images/dr-kratz-spine-model.jpg')}" alt="Dr. Kratz explaining the spine with a model" loading="lazy"><figcaption>Explaining the spine</figcaption></figure>
 </div></div></section>'''+cta_band('Come meet Dr. Kratz')
-    simple('/us/','Meet Dr. Doug Kratz, Gonstead Chiropractor in Oregon, WI | Kratz Family Chiropractic','Meet Dr. Doug Kratz, D.C., the full spine Gonstead chiropractor at Kratz Family Chiropractic in Oregon, WI, and take a look inside the office.','Meet Your Chiropractor in Oregon, WI','Who we are',body,[('Home','/'),('Meet Dr. Kratz','/us/')],(person_schema(),))
+    simple('/us/','Meet Dr. Doug Kratz, Gonstead Chiropractor in Oregon, WI | Kratz Family Chiropractic','Meet Dr. Doug Kratz, D.C., the full spine Gonstead chiropractor at Kratz Family Chiropractic in Oregon, WI, and take a look inside the office.','Meet Dr. Doug Kratz','Who we are',body,[('Home','/'),('Meet Dr. Kratz','/us/')],(person_schema(),))
 
 def testimonials():
     cards=''.join('<div class="tcard placeholder-card"><p><strong>Testimonial coming from Dr. Kratz.</strong> Patient words go here word for word, with the name they approve.</p></div>' for _ in range(6))
     body=f'<section class="band band--paper"><div class="wrap"><div class="placeholder">Dr. Kratz is sending patient testimonials. They will be added here exactly as written. No reviews have been made up for this preview.</div><div class="tgrid">{cards}</div></div></section>'+cta_band()
-    simple('/testimonials/','Patient Testimonials | Kratz Family Chiropractic, Oregon, WI','What patients say about Kratz Family Chiropractic, a Gonstead chiropractor in Oregon, WI.','Patient Testimonials for Our Chiropractor in Oregon, WI','Who we are',body,[('Home','/'),('Testimonials','/testimonials/')])
+    simple('/testimonials/','Patient Testimonials | Kratz Family Chiropractic, Oregon, WI','What patients say about Kratz Family Chiropractic, a Gonstead chiropractor in Oregon, WI.','Patient Testimonials','Who we are',body,[('Home','/'),('Testimonials','/testimonials/')])
 
 def index_page(kind):
     if kind=='services':
-        L=SERVICES; D=SVC; h1='Chiropractor Services in Oregon, WI'; path='/services/'
+        L=SERVICES; D=SVC; h1='Chiropractic Services in Oregon, WI'; path='/services/'
         title='Chiropractic Services in Oregon, WI | Kratz Family Chiropractic'
         desc='Gonstead chiropractic, care for kids and expecting moms, wellness care, massage therapy and nutrition support at Kratz Family Chiropractic in Oregon, WI.'
         lead='Everything here starts with a full Gonstead analysis, so each service fits what your body actually needs.'
     else:
-        L=CONDITIONS; D=CON; h1='Conditions We Help With: Chiropractor in Oregon, WI'; path='/conditions/'
+        L=CONDITIONS; D=CON; h1='Conditions We Help With in Oregon, WI'; path='/conditions/'
         title='Conditions We Help With in Oregon, WI | Kratz Family Chiropractic'
         desc='Back pain, neck pain, headaches, sciatica, disc injuries and more. See how Gonstead chiropractic care at Kratz Family Chiropractic in Oregon, WI may help.'
         lead='Find the problem that sounds like yours. Each page explains what tends to cause it and how chiropractic care may help.'
@@ -460,7 +460,7 @@ def faqs():
 <div class="citation"><strong>{E(c['stat'])}</strong>{E(c['text'])} <span>{E(c['source'])}<a href="{c['link_url']}" target="_blank" rel="noopener">{E(c['link_text'])}</a></span></div>
 <h2>{E(d['directory_heading'])}</h2><p>{E(d['directory_intro'])}</p><ul style="columns:2">{dirlinks}</ul>
 </div></div></section>'''+cta_band(d['cta']['heading'],'Ask us directly. Call the office and get a straight answer either way.')
-    simple('/faqs/','Chiropractic FAQ, Oregon, WI | Kratz Family Chiropractic','Straight answers to the questions people ask before a first chiropractic visit in Oregon, WI: safety, whether adjustments hurt, how many visits, referrals and insurance.','Chiropractor in Oregon, WI: Questions We Hear Before Anyone Books','Good questions',body,[('Home','/'),('FAQ','/faqs/')],(faq_schema(allq),))
+    simple('/faqs/','Chiropractic FAQ, Oregon, WI | Kratz Family Chiropractic','Straight answers to the questions people ask before a first chiropractic visit in Oregon, WI: safety, whether adjustments hurt, how many visits, referrals and insurance.','Questions We Hear Before Anyone Books','Good questions',body,[('Home','/'),('FAQ','/faqs/')],(faq_schema(allq),))
 
 def contact():
     body=f'''<section class="band band--paper"><div class="wrap split" style="align-items:start">
@@ -480,7 +480,7 @@ def contact():
 <p class="form-note">Please do not include medical details here.</p>
 <button class="btn btn--primary" type="submit">Send message</button><p class="form-status" role="status"></p>
 </form></div></div></section>'''
-    simple('/contact-us/','Contact Kratz Family Chiropractic, Oregon, WI','Call (608) 291-1037 or visit Kratz Family Chiropractic at 600 Pleasant Oak Dr, Suite B, Oregon, WI 53575. Address, hours, directions and a contact form.','Contact Our Chiropractor in Oregon, WI','Contact us',body,[('Home','/'),('Contact Us','/contact-us/')])
+    simple('/contact-us/','Contact Kratz Family Chiropractic, Oregon, WI','Call (608) 291-1037 or visit Kratz Family Chiropractic at 600 Pleasant Oak Dr, Suite B, Oregon, WI 53575. Address, hours, directions and a contact form.','Contact Kratz Family Chiropractic','Contact us',body,[('Home','/'),('Contact Us','/contact-us/')])
 
 def request_appt():
     days=''.join(f'<label class="chk"><input type="checkbox" name="days" value="{d}"> {d}</label>' for d,o,c in HOURS if o)
@@ -504,7 +504,7 @@ def request_appt():
 <h3>Office hours</h3>{hours_list()}
 <p style="margin-top:1rem"><a href="{U('/first-visit/')}">What to expect at your first visit</a></p></div>
 </div></section>'''
-    simple('/request-appointment/','Request an Appointment | Kratz Family Chiropractic, Oregon, WI','Request a new patient appointment with Dr. Doug Kratz at Kratz Family Chiropractic in Oregon, WI. Send your preferred days and times and the office will call you.','Request an Appointment with Our Chiropractor in Oregon, WI','New patients',body,[('Home','/'),('Request an Appointment','/request-appointment/')])
+    simple('/request-appointment/','Request an Appointment | Kratz Family Chiropractic, Oregon, WI','Request a new patient appointment with Dr. Doug Kratz at Kratz Family Chiropractic in Oregon, WI. Send your preferred days and times and the office will call you.','Request an Appointment','New patients',body,[('Home','/'),('Request an Appointment','/request-appointment/')])
 
 def legal():
     LEGAL=json.load(open(os.path.join(HERE,'legal-src.json')))['pages']
