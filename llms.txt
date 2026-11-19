@@ -5,7 +5,7 @@
 ## Practice facts
 - Address: 600 Pleasant Oak Dr, Suite B, Oregon, WI 53575
 - Phone: (608) 291-1037
-- Hours: Monday 9:00 am to 6:00 pm; Tuesday 9:00 am to 12:00 pm; Wednesday 9:00 am to 6:00 pm; Thursday 3:00 pm to 6:00 pm; Friday 9:00 am to 12:00 pm; Saturday Closed; Sunday Closed
+- Hours: Monday 9:00 am to 6:00 pm; Tuesday 9:00 am to 12:00 pm; Wednesday 2:00 pm to 6:00 pm; Thursday 2:00 pm to 6:00 pm; Friday 9:00 am to 12:00 pm; Saturday Closed; Sunday Closed
 - Years in practice: 25
 - Request an appointment: https://localember.github.io/kratz-chiro-preview/request-appointment/
 - Technique: Gonstead (full spine analysis: visualization, instrumentation, palpation, X-ray, symptoms)

@@ -25,7 +25,7 @@ MAPS=MAPS_RAW.replace('&','&amp;')
 GBP_URL='https://maps.google.com/?cid=12421703845157817248'
 EMBED='https://maps.google.com/maps?q=Kratz+Family+Chiropractic%2C+600+Pleasant+Oak+Dr+Suite+B%2C+Oregon%2C+WI+53575&amp;z=15&amp;output=embed'
 # Google Business Profile hours (Google Maps listing, read 2026-11-19)
-HOURS=[('Monday','09:00','18:00'),('Tuesday','09:00','12:00'),('Wednesday','09:00','18:00'),('Thursday','15:00','18:00'),('Friday','09:00','12:00'),('Saturday',None,None),('Sunday',None,None)]
+HOURS=[('Monday','09:00','18:00'),('Tuesday','09:00','12:00'),('Wednesday','14:00','18:00'),('Thursday','14:00','18:00'),('Friday','09:00','12:00'),('Saturday',None,None),('Sunday',None,None)]
 def t12(t):
     h,m=map(int,t.split(':')); s='am' if h<12 else 'pm'; h=h%12 or 12
     return f"{h}:{m:02d} {s}"
@@ -293,7 +293,7 @@ def catalog_page(kind,slug,d):
 HOME_FAQ=[
  {"q":"Where is Kratz Family Chiropractic located?","a":"Kratz Family Chiropractic is at 600 Pleasant Oak Dr, Suite B in Oregon, Wisconsin 53575. It is our only office. Patients come from Oregon, Stoughton, Fitchburg, Brooklyn and the south Madison area. Call (608) 291-1037 to book a visit or ask a question before you come in."},
  {"q":"What is a Gonstead chiropractor?","a":"A Gonstead chiropractor uses the full spine analysis developed by Dr. Clarence Gonstead in Mt. Horeb, Wisconsin. Before adjusting, Dr. Kratz looks at five things: visualization, instrumentation, palpation, X-ray and your symptoms. The goal is to find the specific segment that needs care and adjust it by hand, leaving the rest alone."},
- {"q":"What are the office hours?","a":"The office is open Monday and Wednesday from 9:00 am to 6:00 pm, Tuesday and Friday from 9:00 am to 12:00 pm, and Thursday from 3:00 pm to 6:00 pm. We are closed on weekends. Hours can change around holidays, so call (608) 291-1037 if you are unsure."},
+ {"q":"What are the office hours?","a":"The office is open Monday from 9:00 am to 6:00 pm, Tuesday and Friday from 9:00 am to 12:00 pm, and Wednesday and Thursday from 2:00 pm to 6:00 pm. We are closed on weekends. Hours can change around holidays, so call (608) 291-1037 if you are unsure."},
  {"q":"Do I need a referral to see a chiropractor in Oregon, WI?","a":"No referral is needed to book a first visit at Kratz Family Chiropractic. You can call the office directly to schedule. If your plan has its own rules about referrals or coverage, we will go over that with you before care starts, so there are no surprises about cost later."},
  {"q":"What happens at a first Gonstead visit?","a":"Your first visit starts with a conversation about your health history and what brought you in. Dr. Kratz then does a full Gonstead analysis, which can include X-rays where appropriate. You will leave knowing what was found and what happens next. Plan on 45 minutes to an hour for this first visit."},
  {"q":"Does Kratz Family Chiropractic see children and families?","a":"Yes. Kratz Family Chiropractic sees patients of all ages, from kids to grandparents. The Gonstead method adjusts by hand, and the force is matched to the person on the table, so care for a child looks very different from care for an adult. Parents are welcome to stay in the room."},
