@@ -20,7 +20,9 @@ B={ 'name':'Kratz Family Chiropractic','short':'Kratz Family Chiropractic',
   'towns':'Oregon, Stoughton, Fitchburg, Brooklyn and the south Madison area',
   'lead_email':'doug@kratzfamilychiro.com'}
 B['addr_full']=f"{B['street']}, {B['city']}, {B['state']} {B['zip']}"
-MAPS='https://www.google.com/maps/search/?api=1&query='+'600+Pleasant+Oak+Dr+Suite+B,+Oregon,+WI+53575'
+MAPS_RAW='https://www.google.com/maps/dir/?api=1&destination=Kratz+Family+Chiropractic,+600+Pleasant+Oak+Dr+Suite+B,+Oregon,+WI+53575&destination_place_id=ChIJEWOaEgBLBogRoEu8i9XBYqw'
+MAPS=MAPS_RAW.replace('&','&amp;')
+GBP_URL='https://maps.google.com/?cid=12421703845157817248'
 EMBED='https://maps.google.com/maps?q=Kratz+Family+Chiropractic%2C+600+Pleasant+Oak+Dr+Suite+B%2C+Oregon%2C+WI+53575&amp;z=15&amp;output=embed'
 # Google Business Profile hours (Google Maps listing, read 2026-11-19)
 HOURS=[('Monday','09:00','18:00'),('Tuesday','09:00','12:00'),('Wednesday','09:00','18:00'),('Thursday','15:00','18:00'),('Friday','09:00','12:00'),('Saturday',None,None),('Sunday',None,None)]
@@ -151,7 +153,7 @@ def biz_schema():
       "telephone":B['tel'],"priceRange":"$$" if False else None,
       "address":{"@type":"PostalAddress","streetAddress":B['street'],"addressLocality":B['city'],"addressRegion":B['state'],"postalCode":B['zip'],"addressCountry":"US"},
       "geo":{"@type":"GeoCoordinates","latitude":B['lat'],"longitude":B['lng']},
-      "hasMap":MAPS,
+      "hasMap":GBP_URL,
       "openingHoursSpecification":[{"@type":"OpeningHoursSpecification","dayOfWeek":d,"opens":o,"closes":c} for d,o,c in HOURS if o],
       "areaServed":[{"@type":"City","name":"Oregon, WI"},{"@type":"City","name":"Stoughton, WI"},{"@type":"City","name":"Fitchburg, WI"},{"@type":"City","name":"Brooklyn, WI"}],
       "medicalSpecialty":"Chiropractic","knowsAbout":["Gonstead technique","Full spine chiropractic","Family chiropractic care"],
