@@ -563,8 +563,8 @@ a{color:var(--lake)}
 /* Page heroes on inner pages */
 .page-hero{background:#E6F0F6;padding:1.6rem 0 2rem;margin-bottom:0}
 .page-hero h1{color:var(--forest)}
-.crumbs{margin-bottom:.6rem}
-.crumb-wrap{background:#E6F0F6}
+.crumbs{margin-bottom:0;padding-bottom:.6rem}
+.crumb-wrap{background:#E6F0F6;display:flow-root}
 
 /* Benefits and process bands from the catalog */
 .benefits{display:grid;gap:1rem;margin-top:1.2rem}
