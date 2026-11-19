@@ -605,3 +605,25 @@ legend{font-weight:500;font-size:.9rem;padding:0 .3rem}
   body{padding-bottom:72px}
 }
 .site-header .header-cta .btn--ghost{background:#fff}
+@media (max-width:1199px){.hide-md{display:none!important}}
+@media (min-width:980px){.nav-list > li > a, .nav-parent > button{padding:.55rem .55rem}}
+/* Header CTAs: phone under 980 (request lives in the bottom bar), request from 980, both from 1360 */
+.hdr-req{display:none}
+@media (min-width:980px){
+  .hdr-req{display:inline-flex}
+  .hdr-call{display:none}
+  .logo-link img{height:50px}
+  .nav-list > li > a, .nav-parent > button{font-size:.86rem;padding:.55rem .45rem}
+  .header-inner{gap:.8rem}
+}
+@media (min-width:1360px){
+  .hdr-call{display:inline-flex;background:#fff;color:var(--forest);border-color:var(--forest)}
+  .hdr-call:hover{background:var(--forest);color:#fff}
+  .logo-link img{height:58px}
+  .nav-list > li > a, .nav-parent > button{font-size:.9rem;padding:.55rem .6rem}
+}
+@media (min-width:980px) and (max-width:1099px){
+  .logo-link img{height:42px}
+  .nav-list > li > a, .nav-parent > button{font-size:.82rem;padding:.5rem .35rem}
+  .header-cta .btn{padding:.6rem .9rem;font-size:.85rem}
+}

@@ -100,17 +100,16 @@ def header(cur):
 </div></div>
 <header class="site-header"><div class="wrap header-inner">
   <a class="logo-link" href="{U('/')}"><img src="{U('/assets/images/logo-nav.png')}" width="640" height="178" alt="Kratz Family Chiropractic, Full Spine Gonstead Practitioner"></a>
-  <span class="header-cta"><a class="btn btn--ghost hide-sm" href="{U('/request-appointment/')}">Request Appointment</a> <a class="btn btn--primary" href="tel:{B['tel']}">Call Now</a></span>
+  <span class="header-cta"><a class="btn btn--primary hdr-req" href="{U('/request-appointment/')}">Request Appointment</a> <a class="btn btn--primary hdr-call" href="tel:{B['tel']}">Call Now</a></span>
   <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="site-nav">Menu</button>
   <nav class="nav" id="site-nav" aria-label="Primary"><ul class="nav-list">
     <li class="nav-parent"><button type="button">Who We Are</button><ul class="sub"><li><a href="{U('/us/')}">Meet Dr. Kratz</a></li><li><a href="{U('/testimonials/')}">Testimonials</a></li></ul></li>
-    <li class="nav-parent"><button type="button">Gonstead Technique</button><ul class="sub">{navlink('gonstead-system',cur)}{navlink('founder-of-gonstead',cur)}</ul></li>
+    <li class="nav-parent"><button type="button">Gonstead</button><ul class="sub">{navlink('gonstead-system',cur)}{navlink('founder-of-gonstead',cur)}</ul></li>
     <li class="nav-parent"><button type="button">New Patients</button><ul class="sub">{navlink('first-visit',cur)}{navlink('second-visit',cur)}{navlink('follow-up-visit',cur)}</ul></li>
     <li class="nav-parent"><button type="button">What We Do</button><div class="mega"><div class="mega-grid">
       {col('Services',SERVICES)}{col('Spine',['back-pain','neck-pain','headaches','sciatica','disc-injury'])}{col('Injuries',['whiplash','sports-injury','work-injury'])}{col('Joints and more',['shoulder-pain','hip-pain','knee-pain','scoliosis','arthritis'])}
     </div><p style="margin:.85rem 0 0;"><a href="{U('/services/')}">All services</a> &middot; <a href="{U('/conditions/')}">All conditions</a></p></div></li>
     <li><a href="{U('/faqs/')}">FAQ</a></li>
-    <li><a href="{U('/request-appointment/')}">Request Appointment</a></li>
     <li><a href="{U('/contact-us/')}">Contact Us</a></li>
   </ul>
   <div class="nav-mobile-cta"><a class="btn btn--ghost" href="{U('/request-appointment/')}">Request Appointment</a> <a class="btn btn--primary" href="tel:{B['tel']}">Call {B['phone']}</a></div>
