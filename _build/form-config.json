@@ -1,0 +1,10 @@
+{
+  "_note": "Preview only. Forms on localember.github.io are inactive (submit is intercepted in assets/site.js). Wire these on the live build.",
+  "forms": {
+    "contact-us#request": {
+      "fields": ["name", "phone", "email", "message"],
+      "notify": ["doug@kratzfamilychiro.com"],
+      "source": "GrowGonstead Advisor brief, Nov 19 2026 (lead notifications go to doug@kratzfamilychiro.com)"
+    }
+  }
+}

@@ -1,0 +1,47 @@
+# Kratz Family Chiropractic
+
+> Full spine Gonstead chiropractor in Oregon, Wisconsin. Dr. Doug Kratz, D.C. (Dr. Douglas Kratz). Design preview, not the live site.
+
+## Practice facts
+- Address: 600 Pleasant Oak Dr, Suite B, Oregon, WI 53575
+- Phone: (608) 291-1037
+- Hours: Monday 9:00 am to 6:00 pm; Tuesday 9:00 am to 12:00 pm; Wednesday 9:00 am to 6:00 pm; Thursday 3:00 pm to 6:00 pm; Friday 9:00 am to 12:00 pm; Saturday Closed; Sunday Closed
+- Technique: Gonstead (full spine analysis: visualization, instrumentation, palpation, X-ray, symptoms)
+- Areas served: Oregon, Stoughton, Fitchburg, Brooklyn and the south Madison area
+- Facebook: https://www.facebook.com/people/Kratz-Family-Chiropractic/61596698663855/
+
+## Key pages
+- [Gonstead Chiropractor in Oregon, WI | Kratz Family Chiropractic](https://localember.github.io/kratz-chiro-preview/): Kratz Family Chiropractic is a full spine Gonstead chiropractor in Oregon, WI. Dr. Doug Kratz cares for families at 600 Pleasant Oak Dr, Suite B. Call (608) 291-1037.
+- [Meet Dr. Doug Kratz, Gonstead Chiropractor in Oregon, WI | Kratz Family Chiropractic](https://localember.github.io/kratz-chiro-preview/us/): Meet Dr. Doug Kratz, D.C., the full spine Gonstead chiropractor at Kratz Family Chiropractic in Oregon, WI, and take a look inside the office.
+- [Gonstead Technique in Oregon, WI: The 5 Components | Kratz Family Chiropractic](https://localember.github.io/kratz-chiro-preview/gonstead-system/): Visualization, Instrumentation, Palpation, X-Ray and case management: the five components of the Gonstead Technique and what each one contributes. Kratz Family Chiropractic, Oregon, WI.
+- [Dr. Clarence Gonstead, Founder of the Gonstead Technique | Kratz Family Chiropractic](https://localember.github.io/kratz-chiro-preview/founder-of-gonstead/): Dr. Clarence Gonstead, the Level Disc Theory, the Nervoscope, and the clinic at Mt. Horeb. Kratz Family Chiropractic, Oregon, WI.
+- [Your First Gonstead Chiropractic Visit in Oregon, WI | Kratz Family Chiropractic](https://localember.github.io/kratz-chiro-preview/first-visit/): Around 45 minutes to an hour, and you will leave knowing what is going on and what happens next. Kratz Family Chiropractic, Oregon, WI.
+- [Your Second Visit: Report of Findings in Oregon, WI | Kratz Family Chiropractic](https://localember.github.io/kratz-chiro-preview/second-visit/): About thirty minutes: what we found, what it means, and what we recommend. Kratz Family Chiropractic, Oregon, WI.
+- [Gonstead Follow-Up Visits in Oregon, WI | Kratz Family Chiropractic](https://localember.github.io/kratz-chiro-preview/follow-up-visit/): Shorter, focused appointments that keep your care moving in the right direction. Kratz Family Chiropractic, Oregon, WI.
+- [Chiropractic Services in Oregon, WI | Kratz Family Chiropractic](https://localember.github.io/kratz-chiro-preview/services/): Gonstead chiropractic, care for kids and expecting moms, wellness care, massage therapy and nutrition support at Kratz Family Chiropractic in Oregon, WI.
+- [Conditions We Help With in Oregon, WI | Kratz Family Chiropractic](https://localember.github.io/kratz-chiro-preview/conditions/): Back pain, neck pain, headaches, sciatica, disc injuries and more. See how Gonstead chiropractic care at Kratz Family Chiropractic in Oregon, WI may help.
+- [Chiropractic FAQ, Oregon, WI | Kratz Family Chiropractic](https://localember.github.io/kratz-chiro-preview/faqs/): Straight answers to the questions people ask before a first chiropractic visit in Oregon, WI: safety, whether adjustments hurt, how many visits, referrals and insurance.
+- [Contact Kratz Family Chiropractic, Oregon, WI](https://localember.github.io/kratz-chiro-preview/contact-us/): Call (608) 291-1037 or visit Kratz Family Chiropractic at 600 Pleasant Oak Dr, Suite B, Oregon, WI 53575. Hours, directions and an appointment request form.
+
+## Services
+- [Gonstead Chiropractic Care](https://localember.github.io/kratz-chiro-preview/chiropractic/)
+- [Chiropractic for Kids](https://localember.github.io/kratz-chiro-preview/pediatric/)
+- [Prenatal Chiropractic](https://localember.github.io/kratz-chiro-preview/prenatal/)
+- [Wellness Care](https://localember.github.io/kratz-chiro-preview/wellness-care/)
+- [Massage Therapy](https://localember.github.io/kratz-chiro-preview/massage-therapy/)
+- [Nutrition Support](https://localember.github.io/kratz-chiro-preview/nutrition/)
+
+## Conditions
+- [Back Pain](https://localember.github.io/kratz-chiro-preview/back-pain/)
+- [Neck Pain](https://localember.github.io/kratz-chiro-preview/neck-pain/)
+- [Headaches & Migraines](https://localember.github.io/kratz-chiro-preview/headaches/)
+- [Sciatica](https://localember.github.io/kratz-chiro-preview/sciatica/)
+- [Disc Injury](https://localember.github.io/kratz-chiro-preview/disc-injury/)
+- [Whiplash & Auto Injury](https://localember.github.io/kratz-chiro-preview/whiplash/)
+- [Shoulder Pain](https://localember.github.io/kratz-chiro-preview/shoulder-pain/)
+- [Hip Pain](https://localember.github.io/kratz-chiro-preview/hip-pain/)
+- [Knee Pain](https://localember.github.io/kratz-chiro-preview/knee-pain/)
+- [Sports Injury](https://localember.github.io/kratz-chiro-preview/sports-injury/)
+- [Work Injury](https://localember.github.io/kratz-chiro-preview/work-injury/)
+- [Scoliosis](https://localember.github.io/kratz-chiro-preview/scoliosis/)
+- [Arthritis](https://localember.github.io/kratz-chiro-preview/arthritis/)
