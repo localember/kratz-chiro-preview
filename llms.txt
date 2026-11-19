@@ -6,6 +6,8 @@
 - Address: 600 Pleasant Oak Dr, Suite B, Oregon, WI 53575
 - Phone: (608) 291-1037
 - Hours: Monday 9:00 am to 6:00 pm; Tuesday 9:00 am to 12:00 pm; Wednesday 9:00 am to 6:00 pm; Thursday 3:00 pm to 6:00 pm; Friday 9:00 am to 12:00 pm; Saturday Closed; Sunday Closed
+- Years in practice: 25
+- Request an appointment: https://localember.github.io/kratz-chiro-preview/request-appointment/
 - Technique: Gonstead (full spine analysis: visualization, instrumentation, palpation, X-ray, symptoms)
 - Areas served: Oregon, Stoughton, Fitchburg, Brooklyn and the south Madison area
 - Facebook: https://www.facebook.com/people/Kratz-Family-Chiropractic/61596698663855/
@@ -21,7 +23,8 @@
 - [Chiropractic Services in Oregon, WI | Kratz Family Chiropractic](https://localember.github.io/kratz-chiro-preview/services/): Gonstead chiropractic, care for kids and expecting moms, wellness care, massage therapy and nutrition support at Kratz Family Chiropractic in Oregon, WI.
 - [Conditions We Help With in Oregon, WI | Kratz Family Chiropractic](https://localember.github.io/kratz-chiro-preview/conditions/): Back pain, neck pain, headaches, sciatica, disc injuries and more. See how Gonstead chiropractic care at Kratz Family Chiropractic in Oregon, WI may help.
 - [Chiropractic FAQ, Oregon, WI | Kratz Family Chiropractic](https://localember.github.io/kratz-chiro-preview/faqs/): Straight answers to the questions people ask before a first chiropractic visit in Oregon, WI: safety, whether adjustments hurt, how many visits, referrals and insurance.
-- [Contact Kratz Family Chiropractic, Oregon, WI](https://localember.github.io/kratz-chiro-preview/contact-us/): Call (608) 291-1037 or visit Kratz Family Chiropractic at 600 Pleasant Oak Dr, Suite B, Oregon, WI 53575. Hours, directions and an appointment request form.
+- [Request an Appointment | Kratz Family Chiropractic, Oregon, WI](https://localember.github.io/kratz-chiro-preview/request-appointment/): Request a new patient appointment with Dr. Doug Kratz at Kratz Family Chiropractic in Oregon, WI. Send your preferred days and times and the office will call you.
+- [Contact Kratz Family Chiropractic, Oregon, WI](https://localember.github.io/kratz-chiro-preview/contact-us/): Call (608) 291-1037 or visit Kratz Family Chiropractic at 600 Pleasant Oak Dr, Suite B, Oregon, WI 53575. Address, hours, directions and a contact form.
 
 ## Services
 - [Gonstead Chiropractic Care](https://localember.github.io/kratz-chiro-preview/chiropractic/)

@@ -585,3 +585,23 @@ a{color:var(--lake)}
 .hours li.today span{color:var(--green)}
 .site-footer a.btn--white,.site-footer a.btn--white:hover{color:var(--forest);text-decoration:none}
 .cta-band .btn--white{color:var(--forest)}
+
+/* Round 2: request path */
+@media (max-width:979px){.hide-sm{display:none!important}}
+.np-link{margin:.2rem 0 0;font-size:.95rem}
+.np-link a{font-weight:600;color:var(--forest)}
+.request-callout{background:var(--mint);border:1px solid #CFE6D6;border-radius:14px;padding:1.1rem 1.2rem;margin-bottom:1.6rem}
+.request-callout h2{margin-bottom:.3rem}
+fieldset{border:1px solid var(--line);border-radius:10px;padding:.6rem .9rem .8rem;margin:0}
+legend{font-weight:500;font-size:.9rem;padding:0 .3rem}
+.chk{display:inline-flex;align-items:center;gap:.4rem;margin:.25rem 1rem .25rem 0;font-weight:400;min-height:44px}
+.chk input{width:20px;height:20px;margin:0}
+.chk-row{display:flex;flex-wrap:wrap}
+.mobile-bar{display:none}
+@media (max-width:979px){
+  .mobile-bar{display:flex;gap:.5rem;position:fixed;left:0;right:0;bottom:0;z-index:50;background:#fff;border-top:1px solid var(--line);padding:.5rem .75rem calc(.5rem + env(safe-area-inset-bottom));box-shadow:0 -6px 18px rgba(1,58,91,.12)}
+  .mobile-bar .btn{flex:1;padding:.6rem .5rem;font-size:.92rem}
+  .mobile-bar .btn--ghost{flex:0 0 32%}
+  body{padding-bottom:72px}
+}
+.site-header .header-cta .btn--ghost{background:#fff}
