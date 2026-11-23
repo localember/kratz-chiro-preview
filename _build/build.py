@@ -42,7 +42,7 @@ def sub(s):
     return s
 def U(p): return BASE+p
 
-SERVICES=['chiropractic','pediatric','prenatal','wellness-care','massage-therapy','nutrition']
+SERVICES=['chiropractic','pediatric','prenatal','wellness-care','massage-therapy','nutrition','supplementation']
 CONDITIONS=['back-pain','neck-pain','headaches','sciatica','disc-injury','whiplash','shoulder-pain','hip-pain','knee-pain','sports-injury','work-injury','scoliosis','arthritis']
 GONSTEAD=['gonstead-system','founder-of-gonstead','first-visit','second-visit','follow-up-visit']
 def load(kind,slug): return json.load(open(f'{CAT}/{kind}/{slug}.json'))
@@ -56,8 +56,6 @@ FAQG=json.load(open(f'{CAT}/faq-general.json'))
 INS='We have plans available for all kinds of insurance.'
 NP_SPECIAL='$87.00'
 FIRST_MIN='30 minutes'
-# No x-ray mentions anywhere on the preview until about Jan 1, 2027 (Dr. Kratz, Nov 23).
-XRAY_RE=re.compile(r'x-?\s?rays?|radiograph|imaging',re.I)
 # Testimonials and bio: word for word from Dr. Kratz (double spaces and missing periods kept). Never edit.
 TESTIMONIALS=[
  ('"Kratz Family Chiropractic has been a part of my life for over 20 years.  Dr Kratz takes the time to listen to my questions and concerns and then helps to coordinate a plan addressing my individual needs"','Kelly, Janesville'),
@@ -92,50 +90,22 @@ def drop(lst,pred,what):
     n=len(lst); lst[:]=[x for x in lst if not pred(x)]
     if len(lst)==n: raise SystemExit('drop did not match: '+what)
 
-# x-ray: generic catalog sentences
-R('In plain language, with the imaging in front of you.','In plain language, with your findings in front of you.')
-R('warrants imaging, we will arrange or refer for it','warrants further testing, we will refer you for it')
-R('does not need imaging to begin care','does not need a scan to begin care')
-R('Do I need an X-ray or MRI first?','Do I need an MRI first?')
-R('show signs of osteoarthritis on imaging','show signs of osteoarthritis on scans')
-R('look worn on imaging','look worn on a scan')
-R('that is an exam question, not an imaging one.','that is an exam question, not a scan question.')
-R('The size of the curve, measured on an X-ray, is what guides','The size of the curve, as measured by your medical team, is what guides')
-R('Do I need an X-ray after a collision?','Do I need a scan after a collision?')
-R('we will arrange or refer for imaging before hands-on care begins','we will refer you for further testing before hands-on care begins')
-R('a soft-tissue and joint problem that imaging will not add to','a soft-tissue and joint problem that a scan will not add to')
-R('diagnosis, imaging and hands-on technique','diagnosis and hands-on technique')
-R('a physician, a specialist, or imaging first','a physician or a specialist first')
-R('everything the examination and any imaging turned up','everything the examination turned up')
-# first visit: 30 minutes, no online intake forms, no x-rays
+# first visit: 30 minutes, no online intake forms. X-ray copy is kept (Brevin, Nov 23 2026 5:15 PM CT).
 fv=GON['first-visit']
 R('Around 45 minutes to an hour, and you will leave','About 30 minutes, and you will leave',[fv])
-R('Around 45 minutes to an hour: your history, a full five-component analysis, imaging where appropriate, and usually your first adjustment.','About 30 minutes: your history, a full Gonstead analysis, and usually your first adjustment.',[fv])
-drop(fv['blocks'][2]['items'],lambda i:i['title'].startswith('X-rays') or 'intake forms online' in i['body'],'first-visit timeline')
-R('Five separate lines of evidence have to agree','Several separate lines of evidence have to agree',[fv])
-R('Bring any recent imaging or reports you already have.','Bring any recent reports you already have.',[fv])
+R('Around 45 minutes to an hour: your history, a full five-component analysis, imaging where appropriate, and usually your first adjustment.','About 30 minutes: your history, a full five-component analysis, imaging where appropriate, and usually your first adjustment.',[fv])
+for b in fv['blocks']:
+    if b.get('type')=='timeline':
+        for it in b['items']:
+            if 'intake forms online' in it.get('body',''):
+                it['title']='Your history'
+                it['body']='We go through your history in the office, so the time is spent on your spine and on what brought you in.'
 R('Allow up to an hour so nothing is rushed.','Allow about 30 minutes so nothing is rushed.',[fv])
-R('we should wait for imaging first','we should wait for further testing first',[fv])
-fv['meta']=['\u23f1 Allow about 30 minutes','\U0001f4cd Serving {{service_towns}}']
-# gonstead system: x-ray section, x-ray images and x-ray FAQ removed; hero swapped to a photo with no x-ray film
-gs=GON['gonstead-system']
-gs['hero']['image']='Gonstead/founder-of-gonstead.jpg'; gs['hero']['alt']='Dr. Clarence Gonstead, founder of the Gonstead technique'
-R('Visualization, Instrumentation, Palpation, X-Ray and symptoms. All five, before one adjustment.','Visualization, Instrumentation, Palpation and symptoms, all before one adjustment.',[gs])
-R('relies on five essential components: Visualization, Instrumentation, Palpation, X-Ray, and patient symptoms.','relies on five essential components, including Visualization, Instrumentation, Palpation, and patient symptoms.',[gs])
-for b in gs['blocks']:
-    if b['type']=='bullets' and b['items'] and str(b['items'][0]).startswith('Step 1: X-Rays'): b['items']=['Palpation','Instrumentation','Visualization','Case Management']
-drop(gs['blocks'],lambda b:(b['type']=='h2' and b['text']=='X-Rays') or (b['type']=='image' and ('xrays' in b['src'] or 'instrumentation' in b['src'])) or (b['type']=='p' and b['text'].startswith('In the Gonstead System, Full Spine X-Rays')),'gonstead x-ray blocks')
-R('complements the information gathered through X-Rays and Palpation','complements the information gathered through Palpation',[gs])
-drop(gs['faqs'],lambda f:'X-ray' in f['q'],'gonstead x-ray faq')
-R('Visualization, Instrumentation, Palpation, X-Ray and case management: the five components','Visualization, Instrumentation, Palpation and case management: the components',[gs])
-drop(gs['benefits'],lambda b:b['title']=='Full spine view','gonstead films benefit')
-for b in gs['benefits']:
-    if b['title']=='Five components': b['title']='The full analysis'; b['text']='Visualization, Instrumentation, Palpation and symptoms, correlated.'
-# second visit: hero swapped (old photo showed x-ray films)
+fv['meta']=['⏱ Allow about 30 minutes','📍 Serving {{service_towns}}']
+# nutrition page: rework the "without fads or supplements" phrasing only; the office offers Supplementation.
+R('Straightforward nutrition guidance for energy and recovery, without fads or supplements.','Straightforward nutrition guidance for energy and recovery, without fads.',[SVC['nutrition']])
+R('without fads or a cupboard full of supplements.','without fads.',[SVC['nutrition']])
 sv=GON['second-visit']
-sv['hero']['image']='Gonstead/first-visit.jpg'; sv['hero']['alt']='A chiropractor explaining a model of the spine to a patient'
-R('We explain your imaging and analysis,','We explain your analysis,',[sv])
-R('We go through the imaging and the analysis with you,','We go through the analysis with you,',[sv])
 # insurance: the one line Dr. Kratz gave replaces coverage wording
 R('Payment options are discussed at this visit, and if you have insurance and intend to claim, we provide the documentation you need to do it.','Payment options are discussed at this visit. '+INS,[sv])
 R(' or what your insurance will cover','')
@@ -156,18 +126,7 @@ for D in (SVC,CON):
             if b['type']=='costbox': b['items']=[x for x in b['items'] if not re.search(r'insurance|covered',x if isinstance(x,str) else x.get('text',''),re.I)]
         for f in d.get('faqs',[]):
             if f['q']=='Will my insurance cover it?': f['a']=INS+' We will always tell you the numbers up front so there are no surprises.'
-# guard: nothing x-ray left in catalog copy used by the preview
-def _chk(o,where):
-    if isinstance(o,dict):
-        for k,v in o.items():
-            if not k.startswith('_'): _chk(v,where+'.'+k)
-    elif isinstance(o,list):
-        for i,v in enumerate(o): _chk(v,f'{where}[{i}]')
-    elif isinstance(o,str) and XRAY_RE.search(o): raise SystemExit('x-ray mention left in '+where+': '+o[:120])
-for _n,_D in (('services',SVC),('conditions',CON),('gonstead',GON)):
-    for _s,_d in _D.items(): _chk(_d,f'{_n}/{_s}')
-_chk(FAQG,'faq-general')
-NAV_NAMES={'chiropractic':'Gonstead Chiropractic Care','pediatric':'Chiropractic for Kids','prenatal':'Prenatal Chiropractic','wellness-care':'Wellness Care','massage-therapy':'Massage Therapy','nutrition':'Nutrition Support',
+NAV_NAMES={'chiropractic':'Gonstead Chiropractic Care','pediatric':'Chiropractic for Kids','prenatal':'Prenatal Chiropractic','wellness-care':'Wellness Care','massage-therapy':'Massage Therapy','nutrition':'Nutrition Support','supplementation':'Supplementation',
  'back-pain':'Back Pain','neck-pain':'Neck Pain','headaches':'Headaches & Migraines','sciatica':'Sciatica','disc-injury':'Disc Injury','whiplash':'Whiplash & Auto Injury','shoulder-pain':'Shoulder Pain','hip-pain':'Hip Pain','knee-pain':'Knee Pain','sports-injury':'Sports Injury','work-injury':'Work Injury','scoliosis':'Scoliosis','arthritis':'Arthritis',
  'gonstead-system':'5 Components of Gonstead','founder-of-gonstead':'Dr. Clarence Gonstead','first-visit':'First Visit','second-visit':'Second Visit','follow-up-visit':'Follow-Up Visits'}
 IMG={}
@@ -177,7 +136,7 @@ def catimg(path):
     if path.startswith('Gonstead/'): return 'images/'+n
     return 'images/catalog/'+n.replace('.webp','.jpg')
 # related title -> slug
-REL={'back pain':'back-pain','neck pain & tension':'neck-pain','neck pain':'neck-pain','headaches & migraines':'headaches','whiplash':'whiplash','shoulder pain':'shoulder-pain','sciatica & leg pain':'sciatica','sciatica':'sciatica','disc injury':'disc-injury','hip pain':'hip-pain','knee pain':'knee-pain','sports injury':'sports-injury','pediatric & kids':'pediatric','massage therapy':'massage-therapy','chiropractic care':'chiropractic','pregnancy & postpartum':'prenatal','your first visit':'first-visit','your second visit':'second-visit','follow-up visits':'follow-up-visit','5 components of the gonstead technique':'gonstead-system','work injury':'work-injury','scoliosis':'scoliosis','arthritis':'arthritis'}
+REL={'back pain':'back-pain','neck pain & tension':'neck-pain','neck pain':'neck-pain','headaches & migraines':'headaches','whiplash':'whiplash','shoulder pain':'shoulder-pain','sciatica & leg pain':'sciatica','sciatica':'sciatica','disc injury':'disc-injury','hip pain':'hip-pain','knee pain':'knee-pain','sports injury':'sports-injury','pediatric & kids':'pediatric','massage therapy':'massage-therapy','chiropractic care':'chiropractic','nutrition support':'nutrition','supplementation':'supplementation','pregnancy & postpartum':'prenatal','your first visit':'first-visit','your second visit':'second-visit','follow-up visits':'follow-up-visit','5 components of the gonstead technique':'gonstead-system','work injury':'work-injury','scoliosis':'scoliosis','arthritis':'arthritis'}
 BUILT=set(SERVICES+CONDITIONS+GONSTEAD)
 def rel_slug(it):
     s=it.get('slug') or (it.get('href') or '').strip('/') or REL.get(it['title'].lower())
@@ -348,8 +307,6 @@ def related_html(rel):
 
 PAGES={}
 def write(path,html_):
-    m=XRAY_RE.search(re.sub(r'<script type="application/ld\+json">','',html_))
-    if m: raise SystemExit('X-RAY mention in '+path+': '+html_[max(0,m.start()-80):m.end()+40])
     if 'sms:' in html_.lower(): raise SystemExit('sms link in '+path)
     if '\u2014' in html_: raise SystemExit('EM DASH in '+path+': '+html_[max(0,html_.find('\u2014')-80):html_.find('\u2014')+40])
     p=os.path.join(OUT,path.strip('/'),'index.html') if path!='/404' else os.path.join(OUT,'404.html')
@@ -358,7 +315,7 @@ def nodash(s): return s.replace(' \u2014 ',', ').replace('\u2014',', ')
 
 LOC='Oregon, WI'
 H1={'chiropractic':f'Gonstead Chiropractic in {LOC}','pediatric':f'Kids Chiropractor in {LOC}','prenatal':f'Prenatal Chiropractor in {LOC}',
- 'wellness-care':f'Wellness Care in {LOC}','massage-therapy':f'Massage Therapy in {LOC}','nutrition':f'Nutrition Support in {LOC}',
+ 'wellness-care':f'Wellness Care in {LOC}','massage-therapy':f'Massage Therapy in {LOC}','nutrition':f'Nutrition Support in {LOC}','supplementation':f'Supplementation in {LOC}',
  'headaches':f'Headache and Migraine Chiropractor in {LOC}','whiplash':f'Whiplash and Auto Injury Chiropractor in {LOC}',
  'gonstead-system':'The Gonstead System: A 5-Part Analysis','founder-of-gonstead':'Dr. Clarence Gonstead, Founder of the Gonstead Technique',
  'first-visit':'Your First Visit','second-visit':'Your Second Visit: Report of Findings','follow-up-visit':'Follow-Up Visits'}
@@ -413,7 +370,7 @@ def catalog_page(kind,slug,d):
 # ---------- home ----------
 HOME_FAQ=[
  {"q":"Where is Kratz Family Chiropractic located?","a":"Kratz Family Chiropractic is at 600 Pleasant Oak Dr, Suite B in Oregon, Wisconsin 53575. It is our only office. Patients come from Oregon, Stoughton, Fitchburg, Brooklyn and the south Madison area. Call (608) 291-1037 to book a visit or ask a question before you come in."},
- {"q":"What is a Gonstead chiropractor?","a":"A Gonstead chiropractor uses the full spine analysis developed by Dr. Clarence Gonstead in Mt. Horeb, Wisconsin. Before adjusting, Dr. Kratz looks at several things, including visualization, instrumentation, palpation and your symptoms. The goal is to find the specific segment that needs care and adjust it by hand, leaving the rest alone."},
+ {"q":"What is a Gonstead chiropractor?","a":"A Gonstead chiropractor uses the full spine analysis developed by Dr. Clarence Gonstead in Mt. Horeb, Wisconsin. Before adjusting, Dr. Kratz looks at five things: visualization, instrumentation, palpation, X-ray and your symptoms. The goal is to find the specific segment that needs care and adjust it by hand, leaving the rest alone."},
  {"q":"What are the office hours?","a":"The office is open Monday from 9:00 am to 6:00 pm, Tuesday and Friday from 9:00 am to 12:00 pm, and Wednesday and Thursday from 2:00 pm to 6:00 pm. We are closed on weekends. Hours can change around holidays, so call (608) 291-1037 if you are unsure."},
  {"q":"Do I need a referral to see a chiropractor in Oregon, WI?","a":"No referral is needed to book a first visit at Kratz Family Chiropractic. You can call the office directly to schedule. We have plans available for all kinds of insurance. We will go over cost with you before care starts, so there are no surprises later."},
  {"q":"What happens at a first Gonstead visit?","a":"Your first visit starts with a conversation about your health history and what brought you in. Dr. Kratz then does a full Gonstead analysis and, in most cases, your first adjustment. You will leave knowing what was found and what happens next. Plan on about 30 minutes. The New Patient special is $87.00."},
@@ -427,9 +384,8 @@ def home():
     desc='Kratz Family Chiropractic is a full spine Gonstead chiropractor in Oregon, WI. Dr. Doug Kratz cares for families at 600 Pleasant Oak Dr, Suite B. Call (608) 291-1037.'
     schema=graph(biz_schema(),person_schema(),webpage(path,title,desc),faq_schema(HOME_FAQ),{"@type":"WebSite","@id":SITE+'#website',"name":B['name'],"url":SITE})
     # Featured services from Dr. Kratz (Nov 23): Chiropractic, Nutritional counseling, Supplementation, Massage Therapy.
-    # Supplementation has no page or catalog file yet, so its card links to the nutrition page with a neutral line.
     FEAT=[('chiropractic','Chiropractic',SVC['chiropractic'].get('card_blurb','')),('nutrition','Nutritional counseling','Practical nutrition guidance offered alongside your care.'),
-          ('nutrition','Supplementation','Ask Dr. Kratz about supplementation at your visit.'),('massage-therapy','Massage Therapy',SVC['massage-therapy'].get('card_blurb',''))]
+          ('supplementation','Supplementation',SVC['supplementation'].get('card_blurb','')),('massage-therapy','Massage Therapy',SVC['massage-therapy'].get('card_blurb',''))]
     svc_cards=''.join(f'<a class="svc-card" href="{U("/"+s+"/")}"><img src="{U("/assets/"+catimg(SVC[s]["hero"]["image"]))}" alt="{E(sub(SVC[s]["hero"].get("alt","")))}" loading="lazy" width="1400" height="933"><span>{E(n)}</span><small>{E(sub(b))}</small></a>' for s,n,b in FEAT)
     six=['back-pain','neck-pain','headaches','sciatica','disc-injury','sports-injury']
     cond_cards=''.join(f'<div class="cond-card"><img src="{U("/assets/"+catimg(CON[s]["hero"]["image"]))}" alt="{E(sub(CON[s]["hero"].get("alt","")))}" loading="lazy" width="400" height="400"><div><h3>{E(NAV_NAMES[s])}</h3><p>{E(sub(CON[s]["hero"]["sub"]))}</p><a class="btn" href="{U("/"+s+"/")}">Learn more<span class="skip"> about {E(NAV_NAMES[s].lower())}</span></a></div></div>' for s in six)
@@ -468,11 +424,12 @@ def home():
 <section class="band band--mist"><div class="wrap">
   <p class="eyebrow">Discover Gonstead</p>
   <h2>What makes a Gonstead chiropractor different?</h2>
-  <p class="lead">A Gonstead adjustment is only as good as the analysis behind it. Before {B['doc_short']} adjusts anything, separate checks have to agree on where the problem is.</p>
-  <ol class="five five--four">
+  <p class="lead">A Gonstead adjustment is only as good as the analysis behind it. Before {B['doc_short']} adjusts anything, five separate checks have to agree on where the problem is.</p>
+  <ol class="five">
     <li><h3>Visualization</h3><p>How you stand, move and carry your posture, from the moment you walk in.</p></li>
     <li><h3>Instrumentation</h3><p>A dual-probe instrument compares temperature on both sides of the spine to find inflammation.</p></li>
     <li><h3>Palpation</h3><p>Hands-on checks of the spine, both still and in motion.</p></li>
+    <li><h3>X-ray</h3><p>Full spine films, where appropriate, to see alignment and the discs.</p></li>
     <li><h3>Symptoms</h3><p>Your history and what you feel, so care fits the whole picture.</p></li>
   </ol>
   <p style="margin-top:1.2rem"><a class="btn btn--primary" href="{U('/gonstead-system/')}">The Gonstead analysis explained</a></p>
@@ -652,7 +609,7 @@ def extras():
     open(os.path.join(OUT,'sitemap.xml'),'w').write(sm)
     hrs='; '.join(f"{d[0]} {hours_txt(d)}" for d in HOURS)
     L=[f"# {B['name']}","",f"> Full spine Gonstead chiropractor in Oregon, Wisconsin. {B['doctor']}, D.C. (Dr. Douglas Kratz). Design preview, not the live site.","",
-       "## Practice facts",f"- Address: {B['addr_full']}",f"- Phone: {B['phone']}",f"- Hours: {hrs}","- Years in practice: 25",f"- Request an appointment: {ORIGIN+U('/request-appointment/')}","- Technique: Gonstead (full spine analysis, including visualization, instrumentation, palpation and symptoms)",f"- First visit: about {FIRST_MIN}. New Patient special: {NP_SPECIAL}",f"- Insurance: {INS}","- Appointments: call (call only, no texting) or send the short request form; no online scheduling","- Areas served: Oregon, Stoughton, Fitchburg, Brooklyn and the south Madison area",f"- Facebook: {B['facebook']}","",
+       "## Practice facts",f"- Address: {B['addr_full']}",f"- Phone: {B['phone']}",f"- Hours: {hrs}","- Years in practice: 25",f"- Request an appointment: {ORIGIN+U('/request-appointment/')}","- Technique: Gonstead (full spine analysis, including visualization, instrumentation, palpation, X-ray and symptoms)",f"- First visit: about {FIRST_MIN}. New Patient special: {NP_SPECIAL}",f"- Insurance: {INS}","- Appointments: call (call only, no texting) or send the short request form; no online scheduling","- Areas served: Oregon, Stoughton, Fitchburg, Brooklyn and the south Madison area",f"- Facebook: {B['facebook']}","",
        "## Key pages"]
     for p in ['/','/us/','/gonstead-system/','/founder-of-gonstead/','/first-visit/','/second-visit/','/follow-up-visit/','/services/','/conditions/','/faqs/','/request-appointment/','/contact-us/']:
         L.append(f"- [{PAGES[p][0]}]({ORIGIN+U(p)}): {PAGES[p][1]}")
