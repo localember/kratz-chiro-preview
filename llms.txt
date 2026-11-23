@@ -8,7 +8,10 @@
 - Hours: Monday 9:00 am to 6:00 pm; Tuesday 9:00 am to 12:00 pm; Wednesday 2:00 pm to 6:00 pm; Thursday 2:00 pm to 6:00 pm; Friday 9:00 am to 12:00 pm; Saturday Closed; Sunday Closed
 - Years in practice: 25
 - Request an appointment: https://localember.github.io/kratz-chiro-preview/request-appointment/
-- Technique: Gonstead (full spine analysis: visualization, instrumentation, palpation, X-ray, symptoms)
+- Technique: Gonstead (full spine analysis, including visualization, instrumentation, palpation, X-ray and symptoms)
+- First visit: about 30 minutes. New Patient special: $87.00
+- Insurance: We have plans available for all kinds of insurance.
+- Appointments: call (call only, no texting) or send the short request form; no online scheduling
 - Areas served: Oregon, Stoughton, Fitchburg, Brooklyn and the south Madison area
 - Facebook: https://www.facebook.com/people/Kratz-Family-Chiropractic/61596698663855/
 
@@ -17,13 +20,13 @@
 - [Meet Dr. Doug Kratz, Gonstead Chiropractor in Oregon, WI | Kratz Family Chiropractic](https://localember.github.io/kratz-chiro-preview/us/): Meet Dr. Doug Kratz, D.C., the full spine Gonstead chiropractor at Kratz Family Chiropractic in Oregon, WI, and take a look inside the office.
 - [Gonstead Technique in Oregon, WI: The 5 Components | Kratz Family Chiropractic](https://localember.github.io/kratz-chiro-preview/gonstead-system/): Visualization, Instrumentation, Palpation, X-Ray and case management: the five components of the Gonstead Technique and what each one contributes. Kratz Family Chiropractic, Oregon, WI.
 - [Dr. Clarence Gonstead, Founder of the Gonstead Technique | Kratz Family Chiropractic](https://localember.github.io/kratz-chiro-preview/founder-of-gonstead/): Dr. Clarence Gonstead, the Level Disc Theory, the Nervoscope, and the clinic at Mt. Horeb. Kratz Family Chiropractic, Oregon, WI.
-- [Your First Gonstead Chiropractic Visit in Oregon, WI | Kratz Family Chiropractic](https://localember.github.io/kratz-chiro-preview/first-visit/): Around 45 minutes to an hour, and you will leave knowing what is going on and what happens next. Kratz Family Chiropractic, Oregon, WI.
+- [Your First Gonstead Chiropractic Visit in Oregon, WI | Kratz Family Chiropractic](https://localember.github.io/kratz-chiro-preview/first-visit/): About 30 minutes, and you will leave knowing what is going on and what happens next. Kratz Family Chiropractic, Oregon, WI.
 - [Your Second Visit: Report of Findings in Oregon, WI | Kratz Family Chiropractic](https://localember.github.io/kratz-chiro-preview/second-visit/): About thirty minutes: what we found, what it means, and what we recommend. Kratz Family Chiropractic, Oregon, WI.
 - [Gonstead Follow-Up Visits in Oregon, WI | Kratz Family Chiropractic](https://localember.github.io/kratz-chiro-preview/follow-up-visit/): Shorter, focused appointments that keep your care moving in the right direction. Kratz Family Chiropractic, Oregon, WI.
 - [Chiropractic Services in Oregon, WI | Kratz Family Chiropractic](https://localember.github.io/kratz-chiro-preview/services/): Gonstead chiropractic, care for kids and expecting moms, wellness care, massage therapy and nutrition support at Kratz Family Chiropractic in Oregon, WI.
 - [Conditions We Help With in Oregon, WI | Kratz Family Chiropractic](https://localember.github.io/kratz-chiro-preview/conditions/): Back pain, neck pain, headaches, sciatica, disc injuries and more. See how Gonstead chiropractic care at Kratz Family Chiropractic in Oregon, WI may help.
 - [Chiropractic FAQ, Oregon, WI | Kratz Family Chiropractic](https://localember.github.io/kratz-chiro-preview/faqs/): Straight answers to the questions people ask before a first chiropractic visit in Oregon, WI: safety, whether adjustments hurt, how many visits, referrals and insurance.
-- [Request an Appointment | Kratz Family Chiropractic, Oregon, WI](https://localember.github.io/kratz-chiro-preview/request-appointment/): Request a new patient appointment with Dr. Doug Kratz at Kratz Family Chiropractic in Oregon, WI. Send your preferred days and times and the office will call you.
+- [Request an Appointment | Kratz Family Chiropractic, Oregon, WI](https://localember.github.io/kratz-chiro-preview/request-appointment/): Request a new patient appointment with Dr. Doug Kratz at Kratz Family Chiropractic in Oregon, WI. Send a short request and the office will contact you.
 - [Contact Kratz Family Chiropractic, Oregon, WI](https://localember.github.io/kratz-chiro-preview/contact-us/): Call (608) 291-1037 or visit Kratz Family Chiropractic at 600 Pleasant Oak Dr, Suite B, Oregon, WI 53575. Address, hours, directions and a contact form.
 
 ## Services
@@ -33,6 +36,7 @@
 - [Wellness Care](https://localember.github.io/kratz-chiro-preview/wellness-care/)
 - [Massage Therapy](https://localember.github.io/kratz-chiro-preview/massage-therapy/)
 - [Nutrition Support](https://localember.github.io/kratz-chiro-preview/nutrition/)
+- [Supplementation](https://localember.github.io/kratz-chiro-preview/supplementation/)
 
 ## Conditions
 - [Back Pain](https://localember.github.io/kratz-chiro-preview/back-pain/)
