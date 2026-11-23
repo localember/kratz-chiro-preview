@@ -627,3 +627,14 @@ legend{font-weight:500;font-size:.9rem;padding:0 .3rem}
   .nav-list > li > a, .nav-parent > button{font-size:.82rem;padding:.5rem .35rem}
   .header-cta .btn{padding:.6rem .9rem;font-size:.85rem}
 }
+
+/* Dr. Kratz answers (2026-11-23): four featured services, four-card Gonstead list, new patient offer box */
+@media (min-width:860px){.svc-grid--four{grid-template-columns:repeat(4,minmax(0,1fr))}}
+.five--four li:last-child{grid-column:auto}
+@media (min-width:860px){.five--four{grid-template-columns:repeat(4,minmax(0,1fr))}}
+.np-offer{background:var(--mint);border:1px solid #CFE6D6;border-radius:14px;padding:.9rem 1.1rem;margin:1rem 0 1.2rem;max-width:38rem;overflow-wrap:anywhere}
+.np-offer p{margin:0 0 .35rem;font-size:1rem;color:var(--ink)}
+.np-offer p:last-child{margin:0}
+.np-offer strong{color:var(--forest);font-size:1.05rem}
+.np-offer--dark{background:rgba(255,255,255,.1);border-color:rgba(255,255,255,.3);margin:0 auto 1.2rem}
+.np-offer--dark p,.np-offer--dark strong{color:#fff}
