@@ -56,6 +56,9 @@ FAQG=json.load(open(f'{CAT}/faq-general.json'))
 INS='We have plans available for all kinds of insurance.'
 NP_SPECIAL='$87.00'
 FIRST_MIN='30 minutes'
+CTA_LABEL='Claim $87 New Patient Special'
+CTA_HREF='/request-appointment/'
+HOME_SERVICES=['chiropractic','pediatric','prenatal','wellness-care','massage-therapy','nutrition']  # original homepage set; supplementation stays on /services/ and in the nav
 # Testimonials and bio: word for word from Dr. Kratz (double spaces and missing periods kept). Never edit.
 TESTIMONIALS=[
  ('"Kratz Family Chiropractic has been a part of my life for over 20 years.  Dr Kratz takes the time to listen to my questions and concerns and then helps to coordinate a plan addressing my individual needs"','Kelly, Janesville'),
@@ -105,6 +108,9 @@ fv['meta']=['⏱ Allow about 30 minutes','📍 Serving {{service_towns}}']
 # nutrition page: rework the "without fads or supplements" phrasing only; the office offers Supplementation.
 R('Straightforward nutrition guidance for energy and recovery, without fads or supplements.','Straightforward nutrition guidance for energy and recovery, without fads.',[SVC['nutrition']])
 R('without fads or a cupboard full of supplements.','without fads.',[SVC['nutrition']])
+# supplementation page: use a dedicated supplements photo, not the nutrition food image
+SVC['supplementation']['hero']['image']='Catalog/Services/supplementation.webp'
+SVC['supplementation']['hero']['alt']='Supplement bottles and capsules on a table'
 sv=GON['second-visit']
 # insurance: the one line Dr. Kratz gave replaces coverage wording
 R('Payment options are discussed at this visit, and if you have insurance and intend to claim, we provide the documentation you need to do it.','Payment options are discussed at this visit. '+INS,[sv])
@@ -179,7 +185,7 @@ def header(cur):
 </div></div>
 <header class="site-header"><div class="wrap header-inner">
   <a class="logo-link" href="{U('/')}"><img src="{U('/assets/images/logo-nav.png')}" width="640" height="178" alt="Kratz Family Chiropractic, Full Spine Gonstead Practitioner"></a>
-  <span class="header-cta"><a class="btn btn--primary hdr-req" href="{U('/request-appointment/')}">Request Appointment</a> <a class="btn btn--primary hdr-call" href="tel:{B['tel']}">Call Now</a></span>
+  <span class="header-cta"><a class="btn btn--primary hdr-req" href="{U('/request-appointment/')}">{CTA_LABEL}</a> <a class="btn btn--primary hdr-call" href="tel:{B['tel']}">Call Now</a></span>
   <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="site-nav">Menu</button>
   <nav class="nav" id="site-nav" aria-label="Primary"><ul class="nav-list">
     <li class="nav-parent"><button type="button">Who We Are</button><ul class="sub"><li><a href="{U('/us/')}">Meet Dr. Kratz</a></li><li><a href="{U('/testimonials/')}">Testimonials</a></li></ul></li>
@@ -191,7 +197,7 @@ def header(cur):
     <li><a href="{U('/faqs/')}">FAQ</a></li>
     <li><a href="{U('/contact-us/')}">Contact Us</a></li>
   </ul>
-  <div class="nav-mobile-cta"><a class="btn btn--ghost" href="{U('/request-appointment/')}">Request Appointment</a> <a class="btn btn--primary" href="tel:{B['tel']}">Call {B['phone']}</a></div>
+  <div class="nav-mobile-cta"><a class="btn btn--ghost" href="{U('/request-appointment/')}">{CTA_LABEL}</a> <a class="btn btn--primary" href="tel:{B['tel']}">Call {B['phone']}</a></div>
   </nav>
 </div></header>
 <main id="main">
@@ -212,13 +218,13 @@ def footer():
     </div>
     <div><h3>Office hours</h3>{hours_list()}</div>
     <div><h3>Explore</h3><ul style="list-style:none;padding:0;margin:0;line-height:2">
-      <li><a href="{U('/gonstead-system/')}">The Gonstead Technique</a></li><li><a href="{U('/first-visit/')}">Your First Visit</a></li><li><a href="{U('/services/')}">Services</a></li><li><a href="{U('/conditions/')}">Conditions</a></li><li><a href="{U('/us/')}">Meet Dr. Kratz</a></li><li><a href="{U('/request-appointment/')}">Request an Appointment</a></li><li><a href="{U('/contact-us/')}">Contact Us</a></li></ul>
+      <li><a href="{U('/gonstead-system/')}">The Gonstead Technique</a></li><li><a href="{U('/first-visit/')}">Your First Visit</a></li><li><a href="{U('/services/')}">Services</a></li><li><a href="{U('/conditions/')}">Conditions</a></li><li><a href="{U('/us/')}">Meet Dr. Kratz</a></li><li><a href="{U('/request-appointment/')}">{CTA_LABEL}</a></li><li><a href="{U('/contact-us/')}">Contact Us</a></li></ul>
       <p style="margin-top:1rem"><a class="btn btn--white" href="tel:{B['tel']}">Call {B['phone']}</a></p></div>
   </div>
   <nav class="legal-nav" aria-label="Legal">{''.join(f'<a href="{U("/"+s+"/")}">{t}</a>' for s,t in legal)}</nav>
   <p class="copy">&copy; {yr} Kratz Family Chiropractic. Gonstead chiropractor in Oregon, WI. Design preview by Grow Gonstead.</p>
 </div></footer>
-<div class="mobile-bar"><a class="btn btn--primary" href="{U('/request-appointment/')}">Request Appointment</a><a class="btn btn--ghost" href="tel:{B['tel']}">Call</a></div>
+<div class="mobile-bar"><a class="btn btn--primary" href="{U('/request-appointment/')}">{CTA_LABEL}</a><a class="btn btn--ghost" href="tel:{B['tel']}">Call</a></div>
 <script src="{U('/assets/site.js')}" defer></script>
 </body></html>
 '''
@@ -294,7 +300,7 @@ def faq_html(faqs,heading='Common questions'):
     return f'<section class="band band--mist"><div class="wrap"><h2>{E(sub(heading))}</h2><div class="faq prose prose--wide">'+''.join(f'<details><summary>{E(sub(f["q"]))}</summary><p>{E(sub(f["a"]))}</p></details>' for f in faqs)+'</div></div></section>'
 def cta_band(h='Ready to come in?',s=None):
     s=s or f'Call the office to book a first visit with {B["doc_short"]} in Oregon, or send a request and we will call you back.'
-    return f'''<section class="band band--forest cta-band"><div class="wrap"><h2>{E(sub(h))}</h2><p>{E(sub(s))}</p><p class="btn-row" style="justify-content:center"><a class="btn btn--white" href="tel:{B['tel']}">Call {B['phone']}</a> <a class="btn btn--ghost" href="{U('/request-appointment/')}">Request an appointment</a></p></div></section>'''
+    return f'''<section class="band band--forest cta-band"><div class="wrap"><h2>{E(sub(h))}</h2><p>{E(sub(s))}</p><p class="btn-row" style="justify-content:center"><a class="btn btn--white" href="tel:{B['tel']}">Call {B['phone']}</a> <a class="btn btn--ghost" href="{U('/request-appointment/')}">{CTA_LABEL}</a></p></div></section>'''
 def related_html(rel):
     if not rel: return ''
     cards=[]
@@ -352,7 +358,7 @@ def catalog_page(kind,slug,d):
     out=head(title,desc,path,schema,img or 'images/dr-kratz-portrait.jpg')+header(path)+crumbs_html(trail)
     out+=f'''<section class="page-hero"><div class="wrap"><div class="split">
 <div><p class="eyebrow">{E(sub(hero.get('eyebrow','')))}</p><h1>{E(h1)}</h1><p class="lead">{E(sub_)}</p>{offer_html() if slug=='first-visit' else ''}
-<p class="btn-row"><a class="btn btn--primary" href="tel:{B['tel']}">Call {B['phone']}</a> <a class="btn btn--ghost" href="{U('/request-appointment/')}">Request an appointment</a></p></div>
+<p class="btn-row"><a class="btn btn--primary" href="tel:{B['tel']}">Call {B['phone']}</a> <a class="btn btn--ghost" href="{U('/request-appointment/')}">{CTA_LABEL}</a></p></div>
 <div class="hero-shot" style="margin:0">{f'<img src="{U("/assets/"+img)}" alt="{E(sub(hero.get("alt","")))}" width="1400" height="933">' if img else ''}</div>
 </div></div></section>'''
     out+=f'<section class="band band--paper"><div class="wrap"><div class="prose prose--wide">{blocks(d["blocks"])}</div></div></section>'
@@ -384,9 +390,8 @@ def home():
     desc='Kratz Family Chiropractic is a full spine Gonstead chiropractor in Oregon, WI. Dr. Doug Kratz cares for families at 600 Pleasant Oak Dr, Suite B. Call (608) 291-1037.'
     schema=graph(biz_schema(),person_schema(),webpage(path,title,desc),faq_schema(HOME_FAQ),{"@type":"WebSite","@id":SITE+'#website',"name":B['name'],"url":SITE})
     # Featured services from Dr. Kratz (Nov 23): Chiropractic, Nutritional counseling, Supplementation, Massage Therapy.
-    FEAT=[('chiropractic','Chiropractic',SVC['chiropractic'].get('card_blurb','')),('nutrition','Nutritional counseling','Practical nutrition guidance offered alongside your care.'),
-          ('supplementation','Supplementation',SVC['supplementation'].get('card_blurb','')),('massage-therapy','Massage Therapy',SVC['massage-therapy'].get('card_blurb',''))]
-    svc_cards=''.join(f'<a class="svc-card" href="{U("/"+s+"/")}"><img src="{U("/assets/"+catimg(SVC[s]["hero"]["image"]))}" alt="{E(sub(SVC[s]["hero"].get("alt","")))}" loading="lazy" width="1400" height="933"><span>{E(n)}</span><small>{E(sub(b))}</small></a>' for s,n,b in FEAT)
+    # Homepage services restored to the original six (Dr. Kratz: leave the section as is). Supplementation stays on /services/ and in the nav, not in this grid.
+    svc_cards=''.join(f'<a class="svc-card" href="{U("/"+s+"/")}"><img src="{U("/assets/"+catimg(SVC[s]["hero"]["image"]))}" alt="{E(sub(SVC[s]["hero"].get("alt","")))}" loading="lazy" width="1400" height="933"><span>{E(NAV_NAMES[s])}</span><small>{E(sub(SVC[s].get("card_blurb","")))}</small></a>' for s in HOME_SERVICES)
     six=['back-pain','neck-pain','headaches','sciatica','disc-injury','sports-injury']
     cond_cards=''.join(f'<div class="cond-card"><img src="{U("/assets/"+catimg(CON[s]["hero"]["image"]))}" alt="{E(sub(CON[s]["hero"].get("alt","")))}" loading="lazy" width="400" height="400"><div><h3>{E(NAV_NAMES[s])}</h3><p>{E(sub(CON[s]["hero"]["sub"]))}</p><a class="btn" href="{U("/"+s+"/")}">Learn more<span class="skip"> about {E(NAV_NAMES[s].lower())}</span></a></div></div>' for s in six)
     out=head(title,desc,path,schema)+header(path)
@@ -395,7 +400,7 @@ def home():
   <p class="eyebrow">Full spine Gonstead practitioner</p>
   <h1>Chiropractor <span class="accent">in Oregon, WI</span></h1>
   <p class="lead">Specific, hands-on chiropractic care for the whole family. {B['doc_short']} finds the exact source of the problem with a full Gonstead analysis, then adjusts only what needs it.</p>
-  <p class="btn-row"><a class="btn btn--primary" href="{U('/request-appointment/')}">Request an appointment</a> <a class="btn btn--ghost" href="tel:{B['tel']}">Call {B['phone']}</a></p>
+  <p class="btn-row"><a class="btn btn--primary" href="{U('/request-appointment/')}">{CTA_LABEL}</a> <a class="btn btn--ghost" href="tel:{B['tel']}">Call {B['phone']}</a></p>
   <p class="np-link"><a href="{U('/first-visit/')}">New patient experience: what to expect at your first visit</a></p>
   <div class="k-answer"><span class="lbl">In short</span><p>Kratz Family Chiropractic is a Gonstead chiropractic office at {E(B['addr_full'])}. {B['doctor']}, D.C., has been in practice for 25 years and uses the full Gonstead analysis to find where your spine needs care, then adjusts by hand. Patients of all ages come from Oregon and nearby towns.</p></div>
   <ul class="k-facts"><li>25 years in practice</li><li>Full spine Gonstead analysis</li><li>Care for all ages</li><li>Oregon, WI office</li></ul>
@@ -405,8 +410,8 @@ def home():
 
 <section class="band band--blue"><div class="wrap center">
   <h2>The care we offer</h2>
-  <p class="lead">Gonstead chiropractic is at the center of everything we do, alongside nutritional counseling, supplementation and massage therapy.</p>
-  <div class="svc-grid svc-grid--four">{svc_cards}</div>
+  <p class="lead">Gonstead chiropractic is at the center of everything we do, with care for kids, expecting moms and anyone who wants to stay well.</p>
+  <div class="svc-grid">{svc_cards}</div>
   <p style="margin-top:1.2rem"><a class="btn btn--white" href="{U('/services/')}">All services</a></p>
 </div></section>
 
@@ -446,7 +451,7 @@ def home():
     <a class="step" href="{U('/follow-up-visit/')}"><b>3. Follow-up visits</b><span>Short, specific visits that re-check and adjust what needs it.</span></a>
   </div>
   {offer_html(' np-offer--dark')}
-  <p class="btn-row" style="justify-content:center"><a class="btn btn--white" href="{U('/request-appointment/')}">Request an appointment</a> <a class="btn btn--ghost" href="tel:{B['tel']}">Call {B['phone']}</a></p>
+  <p class="btn-row" style="justify-content:center"><a class="btn btn--white" href="{U('/request-appointment/')}">{CTA_LABEL}</a> <a class="btn btn--ghost" href="tel:{B['tel']}">Call {B['phone']}</a></p>
 </div></div></section>
 
 <section class="band band--mint"><div class="wrap center">
@@ -462,7 +467,6 @@ def home():
   <p class="lead">Most people come in because something hurts. A Gonstead analysis looks for where it starts, not just where you feel it.</p>
   <div class="cond-grid">{cond_cards}</div>
   <p style="margin-top:1.4rem;text-align:center"><a class="btn btn--white" href="{U('/conditions/')}">See all conditions</a></p>
-  <p class="center"><span class="prov-flag">Preview: condition list is provisional until Dr. Kratz confirms his featured conditions.</span></p>
 </div></section>
 
 <section class="band band--paper"><div class="wrap">
@@ -494,7 +498,7 @@ def about():
 <div class="portrait"><img src="{U('/assets/images/dr-kratz-portrait.jpg')}" alt="Dr. Doug Kratz, chiropractor in Oregon, WI" width="1200" height="1600"></div>
 <div class="bio"><p class="eyebrow">Doctor of Chiropractic</p><h2>{B['doctor_full']}</h2>
 {bio_html()}
-<p class="btn-row"><a class="btn btn--primary" href="{U('/request-appointment/')}">Request an appointment</a> <a class="btn btn--ghost" href="tel:{B['tel']}">Call {B['phone']}</a></p><p class="np-link"><a href="{U('/first-visit/')}">What to expect at your first visit</a></p></div>
+<p class="btn-row"><a class="btn btn--primary" href="{U('/request-appointment/')}">{CTA_LABEL}</a> <a class="btn btn--ghost" href="tel:{B['tel']}">Call {B['phone']}</a></p><p class="np-link"><a href="{U('/first-visit/')}">What to expect at your first visit</a></p></div>
 </div></section>
 <section class="band band--mist"><div class="wrap"><h2>Inside our Oregon office</h2>
 <div class="gallery">
@@ -524,7 +528,7 @@ def index_page(kind):
         lead='Find the problem that sounds like yours. Each page explains what tends to cause it and how chiropractic care may help.'
     cards=''.join(f'<a class="card" href="{U("/"+s+"/")}"><img src="{U("/assets/"+catimg(D[s]["hero"]["image"]))}" alt="{E(sub(D[s]["hero"].get("alt","")))}" loading="lazy" width="1400" height="933"><div class="card-body"><h3>{E(NAV_NAMES[s])}</h3><p>{E(sub(D[s].get("card_blurb") or D[s]["hero"]["sub"]))}</p><span class="card-link">Learn more</span></div></a>' for s in L)
     il={"@type":"ItemList","itemListElement":[{"@type":"ListItem","position":i+1,"name":NAV_NAMES[s],"url":ORIGIN+U('/'+s+'/')} for i,s in enumerate(L)]}
-    body=f'<section class="band band--paper"><div class="wrap"><span class="prov-flag">Preview: provisional list until Dr. Kratz confirms his featured {kind}.</span><div class="card-grid cols-3">{cards}</div></div></section>'+cta_band('Not sure where you fit?','Call and describe what is going on. If chiropractic is not the right fit, we will tell you.')
+    body=f'<section class="band band--paper"><div class="wrap"><div class="card-grid cols-3">{cards}</div></div></section>'+cta_band('Not sure where you fit?','Call and describe what is going on. If chiropractic is not the right fit, we will tell you.')
     simple(path,title,desc,h1,'What we do',body,[('Home','/'),(kind.capitalize(),path)],(il,),lead)
 
 def faqs():
@@ -547,7 +551,7 @@ def contact():
 <p class="btn-row" style="margin-top:1rem"><a class="btn btn--primary" href="{MAPS}" target="_blank" rel="noopener">Get directions</a></p>
 <iframe class="map" src="{EMBED}" title="Map to Kratz Family Chiropractic" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
 <p style="margin-top:.8rem"><img src="{U('/assets/images/office-exterior.jpg')}" alt="The building at 600 Pleasant Oak Dr in Oregon, WI" loading="lazy" style="border-radius:14px;max-height:320px;width:100%;object-fit:cover"></p></div>
-<div><div class="request-callout"><h2>New patient?</h2><p>Use the short appointment request form and the office will contact you after you submit to set up your first visit. Your first visit takes about {FIRST_MIN}, and the New Patient special is {NP_SPECIAL}. {INS}</p><a class="btn btn--primary" href="{U('/request-appointment/')}">Request an appointment</a></div>
+<div><div class="request-callout"><h2>New patient?</h2><p>Use the short appointment request form and the office will contact you after you submit to set up your first visit. Your first visit takes about {FIRST_MIN}, and the New Patient special is {NP_SPECIAL}. {INS}</p><a class="btn btn--primary" href="{U('/request-appointment/')}">{CTA_LABEL}</a></div>
 <h2>Send us a message</h2>
 <p>Send a short note and the office will contact you after you submit. There is no online scheduling, and our phone line is for calls only.</p>
 <!-- Lead form config (inactive on preview): submissions go by email to doug@kratzfamilychiro.com (staff emails can be added later). See _build/form-config.json -->
@@ -563,7 +567,7 @@ def contact():
 
 def request_appt():
     body=f'''<section class="band band--paper"><div class="wrap split" style="align-items:start">
-<div id="request"><h2>New patient appointment request</h2>
+<div id="request"><h2>Claim the $87 New Patient Special</h2>
 <p>Fill out this short form and the office will contact you after you submit to find a time that works. There is no online scheduling; this sends a request and does not book a time on its own.</p>
 {offer_html()}
 <!-- Lead form config (inactive on preview): submissions go by email to doug@kratzfamilychiro.com (staff emails can be added later). See _build/form-config.json -->
@@ -580,7 +584,7 @@ def request_appt():
 <h3>Office hours</h3>{hours_list()}
 <p style="margin-top:1rem"><a href="{U('/first-visit/')}">What to expect at your first visit</a></p></div>
 </div></section>'''
-    simple('/request-appointment/','Request an Appointment | Kratz Family Chiropractic, Oregon, WI','Request a new patient appointment with Dr. Doug Kratz at Kratz Family Chiropractic in Oregon, WI. Send a short request and the office will contact you.','Request an Appointment','New patients',body,[('Home','/'),('Request an Appointment','/request-appointment/')])
+    simple('/request-appointment/','Claim the $87 New Patient Special | Kratz Family Chiropractic, Oregon, WI','Claim the $87 New Patient special at Kratz Family Chiropractic in Oregon, WI. Send a short request and the office will contact you.','Claim the $87 New Patient Special','New patients',body,[('Home','/'),('Claim the $87 New Patient Special','/request-appointment/')])
 
 def legal():
     LEGAL=json.load(open(os.path.join(HERE,'legal-src.json')))['pages']
@@ -609,7 +613,7 @@ def extras():
     open(os.path.join(OUT,'sitemap.xml'),'w').write(sm)
     hrs='; '.join(f"{d[0]} {hours_txt(d)}" for d in HOURS)
     L=[f"# {B['name']}","",f"> Full spine Gonstead chiropractor in Oregon, Wisconsin. {B['doctor']}, D.C. (Dr. Douglas Kratz). Design preview, not the live site.","",
-       "## Practice facts",f"- Address: {B['addr_full']}",f"- Phone: {B['phone']}",f"- Hours: {hrs}","- Years in practice: 25",f"- Request an appointment: {ORIGIN+U('/request-appointment/')}","- Technique: Gonstead (full spine analysis, including visualization, instrumentation, palpation, X-ray and symptoms)",f"- First visit: about {FIRST_MIN}. New Patient special: {NP_SPECIAL}",f"- Insurance: {INS}","- Appointments: call (call only, no texting) or send the short request form; no online scheduling","- Areas served: Oregon, Stoughton, Fitchburg, Brooklyn and the south Madison area",f"- Facebook: {B['facebook']}","",
+       "## Practice facts",f"- Address: {B['addr_full']}",f"- Phone: {B['phone']}",f"- Hours: {hrs}","- Years in practice: 25",f"- Claim $87 New Patient Special: {ORIGIN+U('/request-appointment/')}","- Technique: Gonstead (full spine analysis, including visualization, instrumentation, palpation, X-ray and symptoms)",f"- First visit: about {FIRST_MIN}. New Patient special: {NP_SPECIAL}",f"- Insurance: {INS}","- Appointments: call (call only, no texting) or send the short request form; no online scheduling","- Areas served: Oregon, Stoughton, Fitchburg, Brooklyn and the south Madison area",f"- Facebook: {B['facebook']}","",
        "## Key pages"]
     for p in ['/','/us/','/gonstead-system/','/founder-of-gonstead/','/first-visit/','/second-visit/','/follow-up-visit/','/services/','/conditions/','/faqs/','/request-appointment/','/contact-us/']:
         L.append(f"- [{PAGES[p][0]}]({ORIGIN+U(p)}): {PAGES[p][1]}")

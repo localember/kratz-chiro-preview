@@ -533,12 +533,12 @@ a{color:var(--lake)}
 .npx{background:var(--forest);color:#fff;border-radius:18px;padding:1.6rem 1.3rem;text-align:center}
 .npx h2{color:#fff}
 .npx .eyebrow{color:#9FD8AE}
-.steps{display:grid;gap:.8rem;margin:1.2rem 0 1.4rem;text-align:left}
-@media (min-width:760px){.steps{grid-template-columns:repeat(3,1fr)}}
-.step{background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.2);border-radius:12px;padding:1rem;color:#fff;text-decoration:none;display:block}
+.steps{display:grid;gap:.8rem;margin:1.2rem 0 1.4rem;text-align:left;align-items:stretch}
+@media (min-width:760px){.steps{grid-template-columns:repeat(3,minmax(0,1fr))}}
+.step{background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.2);border-radius:12px;padding:1rem;color:#fff;text-decoration:none;display:flex;flex-direction:column;height:100%;box-sizing:border-box}
 .step:hover{background:rgba(255,255,255,.14);color:#fff}
 .step b{display:block;font-family:var(--serif);font-size:1.15rem;margin-bottom:.25rem}
-.step span{font-size:.92rem;color:#DCE7F1}
+.step span{font-size:.92rem;color:#DCE7F1;flex:1}
 
 /* Testimonials */
 .tgrid{display:grid;gap:1rem;margin-top:1.4rem}
@@ -632,9 +632,16 @@ legend{font-weight:500;font-size:.9rem;padding:0 .3rem}
 @media (min-width:860px){.svc-grid--four{grid-template-columns:repeat(4,minmax(0,1fr))}}
 .five--four li:last-child{grid-column:auto}
 @media (min-width:860px){.five--four{grid-template-columns:repeat(4,minmax(0,1fr))}}
-.np-offer{background:var(--mint);border:1px solid #CFE6D6;border-radius:14px;padding:.9rem 1.1rem;margin:1rem 0 1.2rem;max-width:38rem;overflow-wrap:anywhere}
+.np-offer{background:var(--mint);border:1px solid #CFE6D6;border-radius:14px;padding:.9rem 1.1rem;margin:1rem 0 1.2rem;max-width:38rem;overflow-wrap:break-word}
 .np-offer p{margin:0 0 .35rem;font-size:1rem;color:var(--ink)}
 .np-offer p:last-child{margin:0}
 .np-offer strong{color:var(--forest);font-size:1.05rem}
+.npx .np-offer--dark{max-width:none;width:100%;margin:0 0 1.2rem}
 .np-offer--dark{background:rgba(255,255,255,.1);border-color:rgba(255,255,255,.3);margin:0 auto 1.2rem}
 .np-offer--dark p,.np-offer--dark strong{color:#fff}
+/* Longer CTA label: keep existing button padding/height, allow a clean wrap in tight chrome */
+.mobile-bar .btn--primary{white-space:normal;line-height:1.15;text-align:center}
+.nav-mobile-cta .btn{white-space:normal;line-height:1.15;text-align:center}
+@media (min-width:980px) and (max-width:1359px){
+  .header-cta .btn{white-space:normal;line-height:1.15;text-align:center;max-width:11.5rem}
+}
