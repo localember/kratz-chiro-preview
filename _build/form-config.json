@@ -1,5 +1,5 @@
 {
-  "_note": "Preview only. Forms on localember.github.io are inactive (submit is intercepted in assets/site.js). No online booking. Wire these on the live build.",
+  "_note": "Preview only. Forms on localember.github.io are inactive (submit is intercepted in assets/site.js). No online booking or scheduling; the office contacts people after they submit. Wire these on the live build.",
   "forms": {
     "request-appointment": {
       "page": "/request-appointment/",
@@ -7,15 +7,13 @@
         "name",
         "phone",
         "email",
-        "patient_type (new|returning)",
-        "days (Mon-Fri checkboxes)",
-        "preferred_time",
         "reason"
       ],
       "notify": [
         "doug@kratzfamilychiro.com"
       ],
-      "source": "GrowGonstead Advisor brief, Nov 19 2026"
+      "source": "GrowGonstead Advisor brief, Nov 19 2026; form destination confirmed by Brevin, Nov 23 2026",
+      "notify_note": "Submissions go by email to doug@kratzfamilychiro.com. Staff emails can be added later if needed."
     },
     "contact": {
       "page": "/contact-us/",
@@ -28,7 +26,8 @@
       "notify": [
         "doug@kratzfamilychiro.com"
       ],
-      "source": "GrowGonstead Advisor brief, Nov 19 2026"
+      "source": "GrowGonstead Advisor brief, Nov 19 2026; form destination confirmed by Brevin, Nov 23 2026",
+      "notify_note": "Submissions go by email to doug@kratzfamilychiro.com. Staff emails can be added later if needed."
     }
   }
 }

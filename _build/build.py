@@ -49,6 +49,124 @@ def load(kind,slug): return json.load(open(f'{CAT}/{kind}/{slug}.json'))
 SVC={s:load('services',s) for s in SERVICES}
 CON={s:load('conditions',s) for s in CONDITIONS}
 GON={s:load('gonstead',s) for s in GONSTEAD}
+FAQG=json.load(open(f'{CAT}/faq-general.json'))
+
+# ---------- Dr. Kratz answers, Nov 23 2026 (ticket KFC-2026-11-23-preview-answers) ----------
+# Catalog files stay the base. These are preview-only overrides applied at build time; nothing here is written back to the catalog.
+INS='We have plans available for all kinds of insurance.'
+NP_SPECIAL='$87.00'
+FIRST_MIN='30 minutes'
+# No x-ray mentions anywhere on the preview until about Jan 1, 2027 (Dr. Kratz, Nov 23).
+XRAY_RE=re.compile(r'x-?\s?rays?|radiograph|imaging',re.I)
+# Testimonials and bio: word for word from Dr. Kratz (double spaces and missing periods kept). Never edit.
+TESTIMONIALS=[
+ ('"Kratz Family Chiropractic has been a part of my life for over 20 years.  Dr Kratz takes the time to listen to my questions and concerns and then helps to coordinate a plan addressing my individual needs"','Kelly, Janesville'),
+ ('"I have been going to Kratz Family Chiropractic for over 25 years.  I can\'t imagine getting the care that I receive anywhere else"','Ann, Oregon'),
+ ('"Over the past 20 years Dr. Doug has seen me through knee, shoulder and acute ankle issues. I know that he can be counted on to help with any joint problem."','Karen, Madison')]
+BIO=['Dr. Doug Kratz received his Chiropractic degree from Palmer College of Chiropractic in Davenport Iowa.  He has received extensive advanced training in the Gonstead technique and utilizes it almost exclusively.  Along with his education, he has over 25 years of clinical experience.',
+ 'His patient centered approach is one that is focused on helping his patients achieve optimal physical, mental and social well-being.',
+ 'When he is not helping patients, Dr. Kratz enjoys paddling, fishing and backpacking.  He is also the proud grandfather of two beautiful grandchildren.']
+VERB='style="white-space:pre-wrap"'  # keeps the double spaces visible
+def bio_html(): return ''.join(f'<p {VERB}>{E(p)}</p>' for p in BIO)
+def tcards(): return ''.join(f'<div class="tcard"><p {VERB}>{E(q)}</p><p class="who">{E(w)}</p></div>' for q,w in TESTIMONIALS)
+def offer_html(extra=''):
+    return f'<div class="np-offer{extra}"><p><strong>New Patient special: {NP_SPECIAL}</strong></p><p>Your first visit takes about {FIRST_MIN}.</p><p>{INS}</p></div>'
+
+def _walk(o,fn):
+    if isinstance(o,dict):
+        for k in list(o): o[k]=_walk(o[k],fn)
+    elif isinstance(o,list):
+        for i in range(len(o)): o[i]=_walk(o[i],fn)
+    elif isinstance(o,str): return fn(o)
+    return o
+ALLCAT=[SVC,CON,GON,FAQG]
+def R(old,new,objs=None,regex=False):
+    hits=[0]
+    def fn(s):
+        n=len(re.findall(old,s)) if regex else s.count(old)
+        if n: hits[0]+=n; return re.sub(old,new,s) if regex else s.replace(old,new)
+        return s
+    for o in (objs if objs is not None else ALLCAT): _walk(o,fn)
+    if not hits[0]: raise SystemExit('override did not match: '+old)
+def drop(lst,pred,what):
+    n=len(lst); lst[:]=[x for x in lst if not pred(x)]
+    if len(lst)==n: raise SystemExit('drop did not match: '+what)
+
+# x-ray: generic catalog sentences
+R('In plain language, with the imaging in front of you.','In plain language, with your findings in front of you.')
+R('warrants imaging, we will arrange or refer for it','warrants further testing, we will refer you for it')
+R('does not need imaging to begin care','does not need a scan to begin care')
+R('Do I need an X-ray or MRI first?','Do I need an MRI first?')
+R('show signs of osteoarthritis on imaging','show signs of osteoarthritis on scans')
+R('look worn on imaging','look worn on a scan')
+R('that is an exam question, not an imaging one.','that is an exam question, not a scan question.')
+R('The size of the curve, measured on an X-ray, is what guides','The size of the curve, as measured by your medical team, is what guides')
+R('Do I need an X-ray after a collision?','Do I need a scan after a collision?')
+R('we will arrange or refer for imaging before hands-on care begins','we will refer you for further testing before hands-on care begins')
+R('a soft-tissue and joint problem that imaging will not add to','a soft-tissue and joint problem that a scan will not add to')
+R('diagnosis, imaging and hands-on technique','diagnosis and hands-on technique')
+R('a physician, a specialist, or imaging first','a physician or a specialist first')
+R('everything the examination and any imaging turned up','everything the examination turned up')
+# first visit: 30 minutes, no online intake forms, no x-rays
+fv=GON['first-visit']
+R('Around 45 minutes to an hour, and you will leave','About 30 minutes, and you will leave',[fv])
+R('Around 45 minutes to an hour: your history, a full five-component analysis, imaging where appropriate, and usually your first adjustment.','About 30 minutes: your history, a full Gonstead analysis, and usually your first adjustment.',[fv])
+drop(fv['blocks'][2]['items'],lambda i:i['title'].startswith('X-rays') or 'intake forms online' in i['body'],'first-visit timeline')
+R('Five separate lines of evidence have to agree','Several separate lines of evidence have to agree',[fv])
+R('Bring any recent imaging or reports you already have.','Bring any recent reports you already have.',[fv])
+R('Allow up to an hour so nothing is rushed.','Allow about 30 minutes so nothing is rushed.',[fv])
+R('we should wait for imaging first','we should wait for further testing first',[fv])
+fv['meta']=['\u23f1 Allow about 30 minutes','\U0001f4cd Serving {{service_towns}}']
+# gonstead system: x-ray section, x-ray images and x-ray FAQ removed; hero swapped to a photo with no x-ray film
+gs=GON['gonstead-system']
+gs['hero']['image']='Gonstead/founder-of-gonstead.jpg'; gs['hero']['alt']='Dr. Clarence Gonstead, founder of the Gonstead technique'
+R('Visualization, Instrumentation, Palpation, X-Ray and symptoms. All five, before one adjustment.','Visualization, Instrumentation, Palpation and symptoms, all before one adjustment.',[gs])
+R('relies on five essential components: Visualization, Instrumentation, Palpation, X-Ray, and patient symptoms.','relies on five essential components, including Visualization, Instrumentation, Palpation, and patient symptoms.',[gs])
+for b in gs['blocks']:
+    if b['type']=='bullets' and b['items'] and str(b['items'][0]).startswith('Step 1: X-Rays'): b['items']=['Palpation','Instrumentation','Visualization','Case Management']
+drop(gs['blocks'],lambda b:(b['type']=='h2' and b['text']=='X-Rays') or (b['type']=='image' and ('xrays' in b['src'] or 'instrumentation' in b['src'])) or (b['type']=='p' and b['text'].startswith('In the Gonstead System, Full Spine X-Rays')),'gonstead x-ray blocks')
+R('complements the information gathered through X-Rays and Palpation','complements the information gathered through Palpation',[gs])
+drop(gs['faqs'],lambda f:'X-ray' in f['q'],'gonstead x-ray faq')
+R('Visualization, Instrumentation, Palpation, X-Ray and case management: the five components','Visualization, Instrumentation, Palpation and case management: the components',[gs])
+drop(gs['benefits'],lambda b:b['title']=='Full spine view','gonstead films benefit')
+for b in gs['benefits']:
+    if b['title']=='Five components': b['title']='The full analysis'; b['text']='Visualization, Instrumentation, Palpation and symptoms, correlated.'
+# second visit: hero swapped (old photo showed x-ray films)
+sv=GON['second-visit']
+sv['hero']['image']='Gonstead/first-visit.jpg'; sv['hero']['alt']='A chiropractor explaining a model of the spine to a patient'
+R('We explain your imaging and analysis,','We explain your analysis,',[sv])
+R('We go through the imaging and the analysis with you,','We go through the analysis with you,',[sv])
+# insurance: the one line Dr. Kratz gave replaces coverage wording
+R('Payment options are discussed at this visit, and if you have insurance and intend to claim, we provide the documentation you need to do it.','Payment options are discussed at this visit. '+INS,[sv])
+R(' or what your insurance will cover','')
+R(r'every plan and every (\w+) is different',r'every \1 is different',regex=True)
+R('We cannot promise a specific outcome, what your insurance will cover, or how a claim will be decided; that sits with your insurer and your attorney if you have one.','We cannot promise a specific outcome or how a claim will be decided.',[CON['whiplash']])
+R('We cannot promise a specific outcome, or what any insurer will cover and how they will decide it; that sits with them and, if you have one, your attorney.','We cannot promise a specific outcome or how a claim will be decided.',[CON['work-injury']])
+R('Wellness visits are usually out of pocket, and we tell you the numbers before anything begins.','We tell you the numbers before anything begins.',[SVC['wellness-care']])
+R('Coverage varies a lot by plan, so we go over the numbers with you up front.',INS+' We go over the numbers with you up front.',[FAQG])
+INS_RE=re.compile(r'insur|plan\b|cover|workers|\bbill',re.I)
+for D in (SVC,CON):
+    for slug,d in D.items():
+        bl=d['blocks']
+        for i,b in enumerate(bl):
+            if b['type']=='h2' and 'insurance' in b['text'].lower():
+                p=bl[i+1]; assert p['type']=='p',slug
+                keep=[s for s in re.split(r'(?<=[.!?])\s+',p['text']) if not INS_RE.search(s)]
+                p['text']=' '.join([INS]+keep).replace('No referral is needed either way,','No referral is needed,')
+            if b['type']=='costbox': b['items']=[x for x in b['items'] if not re.search(r'insurance|covered',x if isinstance(x,str) else x.get('text',''),re.I)]
+        for f in d.get('faqs',[]):
+            if f['q']=='Will my insurance cover it?': f['a']=INS+' We will always tell you the numbers up front so there are no surprises.'
+# guard: nothing x-ray left in catalog copy used by the preview
+def _chk(o,where):
+    if isinstance(o,dict):
+        for k,v in o.items():
+            if not k.startswith('_'): _chk(v,where+'.'+k)
+    elif isinstance(o,list):
+        for i,v in enumerate(o): _chk(v,f'{where}[{i}]')
+    elif isinstance(o,str) and XRAY_RE.search(o): raise SystemExit('x-ray mention left in '+where+': '+o[:120])
+for _n,_D in (('services',SVC),('conditions',CON),('gonstead',GON)):
+    for _s,_d in _D.items(): _chk(_d,f'{_n}/{_s}')
+_chk(FAQG,'faq-general')
 NAV_NAMES={'chiropractic':'Gonstead Chiropractic Care','pediatric':'Chiropractic for Kids','prenatal':'Prenatal Chiropractic','wellness-care':'Wellness Care','massage-therapy':'Massage Therapy','nutrition':'Nutrition Support',
  'back-pain':'Back Pain','neck-pain':'Neck Pain','headaches':'Headaches & Migraines','sciatica':'Sciatica','disc-injury':'Disc Injury','whiplash':'Whiplash & Auto Injury','shoulder-pain':'Shoulder Pain','hip-pain':'Hip Pain','knee-pain':'Knee Pain','sports-injury':'Sports Injury','work-injury':'Work Injury','scoliosis':'Scoliosis','arthritis':'Arthritis',
  'gonstead-system':'5 Components of Gonstead','founder-of-gonstead':'Dr. Clarence Gonstead','first-visit':'First Visit','second-visit':'Second Visit','follow-up-visit':'Follow-Up Visits'}
@@ -230,6 +348,9 @@ def related_html(rel):
 
 PAGES={}
 def write(path,html_):
+    m=XRAY_RE.search(re.sub(r'<script type="application/ld\+json">','',html_))
+    if m: raise SystemExit('X-RAY mention in '+path+': '+html_[max(0,m.start()-80):m.end()+40])
+    if 'sms:' in html_.lower(): raise SystemExit('sms link in '+path)
     if '\u2014' in html_: raise SystemExit('EM DASH in '+path+': '+html_[max(0,html_.find('\u2014')-80):html_.find('\u2014')+40])
     p=os.path.join(OUT,path.strip('/'),'index.html') if path!='/404' else os.path.join(OUT,'404.html')
     os.makedirs(os.path.dirname(p),exist_ok=True); open(p,'w').write(html_)
@@ -273,7 +394,7 @@ def catalog_page(kind,slug,d):
     sub_=sub(hero.get('sub',''))
     out=head(title,desc,path,schema,img or 'images/dr-kratz-portrait.jpg')+header(path)+crumbs_html(trail)
     out+=f'''<section class="page-hero"><div class="wrap"><div class="split">
-<div><p class="eyebrow">{E(sub(hero.get('eyebrow','')))}</p><h1>{E(h1)}</h1><p class="lead">{E(sub_)}</p>
+<div><p class="eyebrow">{E(sub(hero.get('eyebrow','')))}</p><h1>{E(h1)}</h1><p class="lead">{E(sub_)}</p>{offer_html() if slug=='first-visit' else ''}
 <p class="btn-row"><a class="btn btn--primary" href="tel:{B['tel']}">Call {B['phone']}</a> <a class="btn btn--ghost" href="{U('/request-appointment/')}">Request an appointment</a></p></div>
 <div class="hero-shot" style="margin:0">{f'<img src="{U("/assets/"+img)}" alt="{E(sub(hero.get("alt","")))}" width="1400" height="933">' if img else ''}</div>
 </div></div></section>'''
@@ -292,10 +413,10 @@ def catalog_page(kind,slug,d):
 # ---------- home ----------
 HOME_FAQ=[
  {"q":"Where is Kratz Family Chiropractic located?","a":"Kratz Family Chiropractic is at 600 Pleasant Oak Dr, Suite B in Oregon, Wisconsin 53575. It is our only office. Patients come from Oregon, Stoughton, Fitchburg, Brooklyn and the south Madison area. Call (608) 291-1037 to book a visit or ask a question before you come in."},
- {"q":"What is a Gonstead chiropractor?","a":"A Gonstead chiropractor uses the full spine analysis developed by Dr. Clarence Gonstead in Mt. Horeb, Wisconsin. Before adjusting, Dr. Kratz looks at five things: visualization, instrumentation, palpation, X-ray and your symptoms. The goal is to find the specific segment that needs care and adjust it by hand, leaving the rest alone."},
+ {"q":"What is a Gonstead chiropractor?","a":"A Gonstead chiropractor uses the full spine analysis developed by Dr. Clarence Gonstead in Mt. Horeb, Wisconsin. Before adjusting, Dr. Kratz looks at several things, including visualization, instrumentation, palpation and your symptoms. The goal is to find the specific segment that needs care and adjust it by hand, leaving the rest alone."},
  {"q":"What are the office hours?","a":"The office is open Monday from 9:00 am to 6:00 pm, Tuesday and Friday from 9:00 am to 12:00 pm, and Wednesday and Thursday from 2:00 pm to 6:00 pm. We are closed on weekends. Hours can change around holidays, so call (608) 291-1037 if you are unsure."},
- {"q":"Do I need a referral to see a chiropractor in Oregon, WI?","a":"No referral is needed to book a first visit at Kratz Family Chiropractic. You can call the office directly to schedule. If your plan has its own rules about referrals or coverage, we will go over that with you before care starts, so there are no surprises about cost later."},
- {"q":"What happens at a first Gonstead visit?","a":"Your first visit starts with a conversation about your health history and what brought you in. Dr. Kratz then does a full Gonstead analysis, which can include X-rays where appropriate. You will leave knowing what was found and what happens next. Plan on 45 minutes to an hour for this first visit."},
+ {"q":"Do I need a referral to see a chiropractor in Oregon, WI?","a":"No referral is needed to book a first visit at Kratz Family Chiropractic. You can call the office directly to schedule. We have plans available for all kinds of insurance. We will go over cost with you before care starts, so there are no surprises later."},
+ {"q":"What happens at a first Gonstead visit?","a":"Your first visit starts with a conversation about your health history and what brought you in. Dr. Kratz then does a full Gonstead analysis and, in most cases, your first adjustment. You will leave knowing what was found and what happens next. Plan on about 30 minutes. The New Patient special is $87.00."},
  {"q":"Does Kratz Family Chiropractic see children and families?","a":"Yes. Kratz Family Chiropractic sees patients of all ages, from kids to grandparents. The Gonstead method adjusts by hand, and the force is matched to the person on the table, so care for a child looks very different from care for an adult. Parents are welcome to stay in the room."},
 ]
 for f in HOME_FAQ:
@@ -305,7 +426,11 @@ def home():
     title='Gonstead Chiropractor in Oregon, WI | Kratz Family Chiropractic'
     desc='Kratz Family Chiropractic is a full spine Gonstead chiropractor in Oregon, WI. Dr. Doug Kratz cares for families at 600 Pleasant Oak Dr, Suite B. Call (608) 291-1037.'
     schema=graph(biz_schema(),person_schema(),webpage(path,title,desc),faq_schema(HOME_FAQ),{"@type":"WebSite","@id":SITE+'#website',"name":B['name'],"url":SITE})
-    svc_cards=''.join(f'<a class="svc-card" href="{U("/"+s+"/")}"><img src="{U("/assets/"+catimg(SVC[s]["hero"]["image"]))}" alt="{E(sub(SVC[s]["hero"].get("alt","")))}" loading="lazy" width="1400" height="933"><span>{E(NAV_NAMES[s])}</span><small>{E(sub(SVC[s].get("card_blurb","")))}</small></a>' for s in SERVICES)
+    # Featured services from Dr. Kratz (Nov 23): Chiropractic, Nutritional counseling, Supplementation, Massage Therapy.
+    # Supplementation has no page or catalog file yet, so its card links to the nutrition page with a neutral line.
+    FEAT=[('chiropractic','Chiropractic',SVC['chiropractic'].get('card_blurb','')),('nutrition','Nutritional counseling','Practical nutrition guidance offered alongside your care.'),
+          ('nutrition','Supplementation','Ask Dr. Kratz about supplementation at your visit.'),('massage-therapy','Massage Therapy',SVC['massage-therapy'].get('card_blurb',''))]
+    svc_cards=''.join(f'<a class="svc-card" href="{U("/"+s+"/")}"><img src="{U("/assets/"+catimg(SVC[s]["hero"]["image"]))}" alt="{E(sub(SVC[s]["hero"].get("alt","")))}" loading="lazy" width="1400" height="933"><span>{E(n)}</span><small>{E(sub(b))}</small></a>' for s,n,b in FEAT)
     six=['back-pain','neck-pain','headaches','sciatica','disc-injury','sports-injury']
     cond_cards=''.join(f'<div class="cond-card"><img src="{U("/assets/"+catimg(CON[s]["hero"]["image"]))}" alt="{E(sub(CON[s]["hero"].get("alt","")))}" loading="lazy" width="400" height="400"><div><h3>{E(NAV_NAMES[s])}</h3><p>{E(sub(CON[s]["hero"]["sub"]))}</p><a class="btn" href="{U("/"+s+"/")}">Learn more<span class="skip"> about {E(NAV_NAMES[s].lower())}</span></a></div></div>' for s in six)
     out=head(title,desc,path,schema)+header(path)
@@ -316,7 +441,7 @@ def home():
   <p class="lead">Specific, hands-on chiropractic care for the whole family. {B['doc_short']} finds the exact source of the problem with a full Gonstead analysis, then adjusts only what needs it.</p>
   <p class="btn-row"><a class="btn btn--primary" href="{U('/request-appointment/')}">Request an appointment</a> <a class="btn btn--ghost" href="tel:{B['tel']}">Call {B['phone']}</a></p>
   <p class="np-link"><a href="{U('/first-visit/')}">New patient experience: what to expect at your first visit</a></p>
-  <div class="k-answer"><span class="lbl">In short</span><p>Kratz Family Chiropractic is a Gonstead chiropractic office at {E(B['addr_full'])}. {B['doctor']}, D.C., has been in practice for 25 years and uses the five-part Gonstead analysis to find where your spine needs care, then adjusts by hand. Patients of all ages come from Oregon and nearby towns.</p></div>
+  <div class="k-answer"><span class="lbl">In short</span><p>Kratz Family Chiropractic is a Gonstead chiropractic office at {E(B['addr_full'])}. {B['doctor']}, D.C., has been in practice for 25 years and uses the full Gonstead analysis to find where your spine needs care, then adjusts by hand. Patients of all ages come from Oregon and nearby towns.</p></div>
   <ul class="k-facts"><li>25 years in practice</li><li>Full spine Gonstead analysis</li><li>Care for all ages</li><li>Oregon, WI office</li></ul>
 </div>
 <div class="k-hero-photo"><img src="{U('/assets/images/dr-kratz-portrait.jpg')}" alt="Dr. Doug Kratz in his Oregon, WI office" width="1200" height="1600"><div class="tag"><strong>{B['doctor']}, D.C.</strong>Gonstead chiropractor, Kratz Family Chiropractic</div></div>
@@ -324,9 +449,9 @@ def home():
 
 <section class="band band--blue"><div class="wrap center">
   <h2>The care we offer</h2>
-  <p class="lead">Gonstead chiropractic is at the center of everything we do, with care for kids, expecting moms and anyone who wants to stay well.</p>
-  <div class="svc-grid">{svc_cards}</div>
-  <p class="prov-flag" style="margin-top:1rem">Preview: service list is provisional until Dr. Kratz confirms his featured services.</p>
+  <p class="lead">Gonstead chiropractic is at the center of everything we do, alongside nutritional counseling, supplementation and massage therapy.</p>
+  <div class="svc-grid svc-grid--four">{svc_cards}</div>
+  <p style="margin-top:1.2rem"><a class="btn btn--white" href="{U('/services/')}">All services</a></p>
 </div></section>
 
 <section class="band band--paper"><div class="wrap split">
@@ -335,8 +460,7 @@ def home():
   <div style="padding-top:1rem">
     <p class="eyebrow">Chiropractor in Oregon, WI</p>
     <h2>Welcome to Kratz Family Chiropractic</h2>
-    <div class="placeholder"><strong>Bio coming from Dr. Kratz.</strong> His own words go here, word for word, once he sends them.</div>
-    <p>Care here starts with listening. For 25 years, {B['doc_short']} has taken the time to understand what is going on, explain what he finds in plain language, and build a plan around your goals, whether you are seven or seventy.</p>
+    {bio_html()}
     <div class="k-split-cta"><a class="btn btn--primary" href="{U('/us/')}">Meet Dr. Kratz</a><p class="sig">{B['doctor']}</p></div>
   </div>
 </div></section>
@@ -344,15 +468,14 @@ def home():
 <section class="band band--mist"><div class="wrap">
   <p class="eyebrow">Discover Gonstead</p>
   <h2>What makes a Gonstead chiropractor different?</h2>
-  <p class="lead">A Gonstead adjustment is only as good as the analysis behind it. Before {B['doc_short']} adjusts anything, five separate checks have to agree on where the problem is.</p>
-  <ol class="five">
+  <p class="lead">A Gonstead adjustment is only as good as the analysis behind it. Before {B['doc_short']} adjusts anything, separate checks have to agree on where the problem is.</p>
+  <ol class="five five--four">
     <li><h3>Visualization</h3><p>How you stand, move and carry your posture, from the moment you walk in.</p></li>
     <li><h3>Instrumentation</h3><p>A dual-probe instrument compares temperature on both sides of the spine to find inflammation.</p></li>
     <li><h3>Palpation</h3><p>Hands-on checks of the spine, both still and in motion.</p></li>
-    <li><h3>X-ray</h3><p>Full spine films, where appropriate, to see alignment and the discs.</p></li>
     <li><h3>Symptoms</h3><p>Your history and what you feel, so care fits the whole picture.</p></li>
   </ol>
-  <p style="margin-top:1.2rem"><a class="btn btn--primary" href="{U('/gonstead-system/')}">The 5 components explained</a></p>
+  <p style="margin-top:1.2rem"><a class="btn btn--primary" href="{U('/gonstead-system/')}">The Gonstead analysis explained</a></p>
   <div class="local-note"><img src="{U('/assets/images/clarence-gonstead.jpg')}" alt="Dr. Clarence Gonstead" loading="lazy"><div><h3>Gonstead started close to home</h3><p>Dr. Clarence Gonstead developed his system in Mt. Horeb, Wisconsin, just west of Madison. Kratz Family Chiropractic carries that method forward in Oregon.</p></div><a class="btn btn--white" href="{U('/founder-of-gonstead/')}">Meet Dr. Gonstead</a></div>
 </div></section>
 
@@ -361,20 +484,20 @@ def home():
   <h2>Three visits to a clear plan</h2>
   <p>You will know what is going on, and what we recommend, before you commit to anything.</p>
   <div class="steps">
-    <a class="step" href="{U('/first-visit/')}"><b>1. First visit</b><span>History, a full Gonstead analysis and X-rays where appropriate.</span></a>
+    <a class="step" href="{U('/first-visit/')}"><b>1. First visit</b><span>About 30 minutes: your history and a full Gonstead analysis.</span></a>
     <a class="step" href="{U('/second-visit/')}"><b>2. Second visit</b><span>Your report of findings, in plain language, and a recommended plan.</span></a>
     <a class="step" href="{U('/follow-up-visit/')}"><b>3. Follow-up visits</b><span>Short, specific visits that re-check and adjust what needs it.</span></a>
   </div>
+  {offer_html(' np-offer--dark')}
   <p class="btn-row" style="justify-content:center"><a class="btn btn--white" href="{U('/request-appointment/')}">Request an appointment</a> <a class="btn btn--ghost" href="tel:{B['tel']}">Call {B['phone']}</a></p>
 </div></div></section>
 
 <section class="band band--mint"><div class="wrap center">
   <h2>What patients say about Kratz Family Chiropractic</h2>
   <div class="tgrid">
-    <div class="tcard placeholder-card"><p><strong>Testimonial coming from Dr. Kratz.</strong> Patient words go here word for word, with the name they approve.</p></div>
-    <div class="tcard placeholder-card"><p><strong>Testimonial coming from Dr. Kratz.</strong> Patient words go here word for word, with the name they approve.</p></div>
-    <div class="tcard placeholder-card"><p><strong>Testimonial coming from Dr. Kratz.</strong> Patient words go here word for word, with the name they approve.</p></div>
+    {tcards()}
   </div>
+  <p style="margin-top:1.2rem"><a class="btn btn--primary" href="{U('/testimonials/')}">More from our patients</a></p>
 </div></section>
 
 <section class="band band--blue"><div class="wrap">
@@ -413,8 +536,7 @@ def about():
     body=f'''<section class="band band--paper"><div class="wrap split">
 <div class="portrait"><img src="{U('/assets/images/dr-kratz-portrait.jpg')}" alt="Dr. Doug Kratz, chiropractor in Oregon, WI" width="1200" height="1600"></div>
 <div class="bio"><p class="eyebrow">Doctor of Chiropractic</p><h2>{B['doctor_full']}</h2>
-<div class="placeholder"><strong>Bio coming from Dr. Kratz.</strong> His bio goes here word for word, with no trimming or rewording, once it lands in the shared Drive folder.</div>
-<p>{B['doctor']} is a full spine Gonstead chiropractor with 25 years in practice and the owner of Kratz Family Chiropractic in Oregon, Wisconsin.</p>
+{bio_html()}
 <p class="btn-row"><a class="btn btn--primary" href="{U('/request-appointment/')}">Request an appointment</a> <a class="btn btn--ghost" href="tel:{B['tel']}">Call {B['phone']}</a></p><p class="np-link"><a href="{U('/first-visit/')}">What to expect at your first visit</a></p></div>
 </div></section>
 <section class="band band--mist"><div class="wrap"><h2>Inside our Oregon office</h2>
@@ -429,8 +551,7 @@ def about():
     simple('/us/','Meet Dr. Doug Kratz, Gonstead Chiropractor in Oregon, WI | Kratz Family Chiropractic','Meet Dr. Doug Kratz, D.C., the full spine Gonstead chiropractor at Kratz Family Chiropractic in Oregon, WI, and take a look inside the office.','Meet Dr. Doug Kratz','Who we are',body,[('Home','/'),('Meet Dr. Kratz','/us/')],(person_schema(),))
 
 def testimonials():
-    cards=''.join('<div class="tcard placeholder-card"><p><strong>Testimonial coming from Dr. Kratz.</strong> Patient words go here word for word, with the name they approve.</p></div>' for _ in range(6))
-    body=f'<section class="band band--paper"><div class="wrap"><div class="placeholder">Dr. Kratz is sending patient testimonials. They will be added here exactly as written. No reviews have been made up for this preview.</div><div class="tgrid">{cards}</div></div></section>'+cta_band()
+    body=f'<section class="band band--paper"><div class="wrap"><div class="tgrid">{tcards()}</div></div></section>'+cta_band()
     simple('/testimonials/','Patient Testimonials | Kratz Family Chiropractic, Oregon, WI','What patients say about Kratz Family Chiropractic, a Gonstead chiropractor in Oregon, WI.','Patient Testimonials','Who we are',body,[('Home','/'),('Testimonials','/testimonials/')])
 
 def index_page(kind):
@@ -450,7 +571,7 @@ def index_page(kind):
     simple(path,title,desc,h1,'What we do',body,[('Home','/'),(kind.capitalize(),path)],(il,),lead)
 
 def faqs():
-    d=json.load(open(f'{CAT}/faq-general.json'))
+    d=FAQG
     allq=d['faqs']
     c=d['citation']
     dirlinks=''.join(f'<li><a href="{U("/"+s+"/")}">{E(NAV_NAMES[s])} questions</a></li>' for s in CONDITIONS+SERVICES+['first-visit','gonstead-system'])
@@ -469,9 +590,10 @@ def contact():
 <p class="btn-row" style="margin-top:1rem"><a class="btn btn--primary" href="{MAPS}" target="_blank" rel="noopener">Get directions</a></p>
 <iframe class="map" src="{EMBED}" title="Map to Kratz Family Chiropractic" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
 <p style="margin-top:.8rem"><img src="{U('/assets/images/office-exterior.jpg')}" alt="The building at 600 Pleasant Oak Dr in Oregon, WI" loading="lazy" style="border-radius:14px;max-height:320px;width:100%;object-fit:cover"></p></div>
-<div><div class="request-callout"><h2>New patient?</h2><p>Use the appointment request form and the office will call you to set up your first visit.</p><a class="btn btn--primary" href="{U('/request-appointment/')}">Request an appointment</a></div>
+<div><div class="request-callout"><h2>New patient?</h2><p>Use the short appointment request form and the office will contact you after you submit to set up your first visit. Your first visit takes about {FIRST_MIN}, and the New Patient special is {NP_SPECIAL}. {INS}</p><a class="btn btn--primary" href="{U('/request-appointment/')}">Request an appointment</a></div>
 <h2>Send us a message</h2>
-<!-- Lead form config (inactive on preview): notifications to doug@kratzfamilychiro.com. See _build/form-config.json -->
+<p>Send a short note and the office will contact you after you submit. There is no online scheduling, and our phone line is for calls only.</p>
+<!-- Lead form config (inactive on preview): submissions go by email to doug@kratzfamilychiro.com (staff emails can be added later). See _build/form-config.json -->
 <form class="js-contact" action="#" method="post" data-preview-inactive="true" data-form="contact">
 <div><label for="f-name">Name</label><input id="f-name" name="name" autocomplete="name" required></div>
 <div><label for="f-phone">Phone</label><input id="f-phone" name="phone" type="tel" autocomplete="tel"></div>
@@ -483,18 +605,15 @@ def contact():
     simple('/contact-us/','Contact Kratz Family Chiropractic, Oregon, WI','Call (608) 291-1037 or visit Kratz Family Chiropractic at 600 Pleasant Oak Dr, Suite B, Oregon, WI 53575. Address, hours, directions and a contact form.','Contact Kratz Family Chiropractic','Contact us',body,[('Home','/'),('Contact Us','/contact-us/')])
 
 def request_appt():
-    days=''.join(f'<label class="chk"><input type="checkbox" name="days" value="{d}"> {d}</label>' for d,o,c in HOURS if o)
     body=f'''<section class="band band--paper"><div class="wrap split" style="align-items:start">
 <div id="request"><h2>New patient appointment request</h2>
-<p>Fill this out and the office will call you to find a time that works. This sends a request; it does not book a time on its own.</p>
-<!-- Lead form config (inactive on preview): notifications to doug@kratzfamilychiro.com. See _build/form-config.json -->
+<p>Fill out this short form and the office will contact you after you submit to find a time that works. There is no online scheduling; this sends a request and does not book a time on its own.</p>
+{offer_html()}
+<!-- Lead form config (inactive on preview): submissions go by email to doug@kratzfamilychiro.com (staff emails can be added later). See _build/form-config.json -->
 <form class="js-contact" action="#" method="post" data-preview-inactive="true" data-form="request-appointment">
 <div><label for="r-name">Name</label><input id="r-name" name="name" autocomplete="name" required></div>
 <div><label for="r-phone">Phone</label><input id="r-phone" name="phone" type="tel" autocomplete="tel" required></div>
 <div><label for="r-email">Email</label><input id="r-email" name="email" type="email" autocomplete="email"></div>
-<fieldset><legend>Are you a new or returning patient?</legend><label class="chk"><input type="radio" name="patient_type" value="new" required> New patient</label><label class="chk"><input type="radio" name="patient_type" value="returning"> Returning patient</label></fieldset>
-<fieldset><legend>Preferred days</legend><div class="chk-row">{days}</div></fieldset>
-<div><label for="r-time">Preferred time of day</label><select id="r-time" name="preferred_time"><option value="">No preference</option><option>Morning</option><option>Afternoon</option><option>Late afternoon or evening</option></select></div>
 <div><label for="r-reason">Reason for visit</label><textarea id="r-reason" name="reason" placeholder="A few words is plenty, for example low back pain or a wellness check."></textarea></div>
 <p class="form-note">Please keep medical details brief. Dr. Kratz will go over your history in person.</p>
 <button class="btn btn--primary" type="submit">Send appointment request</button><p class="form-status" role="status"></p>
@@ -504,7 +623,7 @@ def request_appt():
 <h3>Office hours</h3>{hours_list()}
 <p style="margin-top:1rem"><a href="{U('/first-visit/')}">What to expect at your first visit</a></p></div>
 </div></section>'''
-    simple('/request-appointment/','Request an Appointment | Kratz Family Chiropractic, Oregon, WI','Request a new patient appointment with Dr. Doug Kratz at Kratz Family Chiropractic in Oregon, WI. Send your preferred days and times and the office will call you.','Request an Appointment','New patients',body,[('Home','/'),('Request an Appointment','/request-appointment/')])
+    simple('/request-appointment/','Request an Appointment | Kratz Family Chiropractic, Oregon, WI','Request a new patient appointment with Dr. Doug Kratz at Kratz Family Chiropractic in Oregon, WI. Send a short request and the office will contact you.','Request an Appointment','New patients',body,[('Home','/'),('Request an Appointment','/request-appointment/')])
 
 def legal():
     LEGAL=json.load(open(os.path.join(HERE,'legal-src.json')))['pages']
@@ -533,7 +652,7 @@ def extras():
     open(os.path.join(OUT,'sitemap.xml'),'w').write(sm)
     hrs='; '.join(f"{d[0]} {hours_txt(d)}" for d in HOURS)
     L=[f"# {B['name']}","",f"> Full spine Gonstead chiropractor in Oregon, Wisconsin. {B['doctor']}, D.C. (Dr. Douglas Kratz). Design preview, not the live site.","",
-       "## Practice facts",f"- Address: {B['addr_full']}",f"- Phone: {B['phone']}",f"- Hours: {hrs}","- Years in practice: 25",f"- Request an appointment: {ORIGIN+U('/request-appointment/')}","- Technique: Gonstead (full spine analysis: visualization, instrumentation, palpation, X-ray, symptoms)","- Areas served: Oregon, Stoughton, Fitchburg, Brooklyn and the south Madison area",f"- Facebook: {B['facebook']}","",
+       "## Practice facts",f"- Address: {B['addr_full']}",f"- Phone: {B['phone']}",f"- Hours: {hrs}","- Years in practice: 25",f"- Request an appointment: {ORIGIN+U('/request-appointment/')}","- Technique: Gonstead (full spine analysis, including visualization, instrumentation, palpation and symptoms)",f"- First visit: about {FIRST_MIN}. New Patient special: {NP_SPECIAL}",f"- Insurance: {INS}","- Appointments: call (call only, no texting) or send the short request form; no online scheduling","- Areas served: Oregon, Stoughton, Fitchburg, Brooklyn and the south Madison area",f"- Facebook: {B['facebook']}","",
        "## Key pages"]
     for p in ['/','/us/','/gonstead-system/','/founder-of-gonstead/','/first-visit/','/second-visit/','/follow-up-visit/','/services/','/conditions/','/faqs/','/request-appointment/','/contact-us/']:
         L.append(f"- [{PAGES[p][0]}]({ORIGIN+U(p)}): {PAGES[p][1]}")
