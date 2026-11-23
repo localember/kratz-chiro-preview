@@ -109,7 +109,7 @@ fv['meta']=['⏱ Allow about 30 minutes','📍 Serving {{service_towns}}']
 R('Straightforward nutrition guidance for energy and recovery, without fads or supplements.','Straightforward nutrition guidance for energy and recovery, without fads.',[SVC['nutrition']])
 R('without fads or a cupboard full of supplements.','without fads.',[SVC['nutrition']])
 # supplementation page: use a dedicated supplements photo, not the nutrition food image
-SVC['supplementation']['hero']['image']='Catalog/Services/supplementation.webp'
+SVC['supplementation']['hero']['image']='Catalog/Services/supplementation.svg'
 SVC['supplementation']['hero']['alt']='Supplement bottles and capsules on a table'
 sv=GON['second-visit']
 # insurance: the one line Dr. Kratz gave replaces coverage wording
