@@ -551,8 +551,9 @@ a{color:var(--lake)}
 
 /* Visit band */
 .visit{display:grid;gap:1.4rem}
-@media (min-width:860px){.visit{grid-template-columns:1fr 1fr;gap:2.4rem;align-items:start}}
-.visit .map{height:320px;margin-top:0}
+@media (min-width:860px){.visit{grid-template-columns:1fr 1fr;gap:2.4rem;align-items:center}}
+.visit .map{height:320px;margin-top:0;align-self:center}
+@media (max-width:859px){.visit .map{margin-top:.4rem}}
 .nap{font-style:normal;line-height:1.6;margin:0 0 1rem}
 .nap strong{color:var(--forest)}
 
@@ -639,9 +640,15 @@ legend{font-weight:500;font-size:.9rem;padding:0 .3rem}
 .npx .np-offer--dark{max-width:none;width:100%;margin:0 0 1.2rem}
 .np-offer--dark{background:rgba(255,255,255,.1);border-color:rgba(255,255,255,.3);margin:0 auto 1.2rem}
 .np-offer--dark p,.np-offer--dark strong{color:#fff}
-/* Longer CTA label: keep existing button padding/height, allow a clean wrap in tight chrome */
+/* Three-visits CTA: solid white on the dark panel so it does not blend in */
+.npx .npx-cta{margin-top:.2rem}
+.npx .npx-cta .btn--white{background:#fff;color:var(--forest);border-color:#fff;box-shadow:0 2px 14px rgba(0,0,0,.28);font-weight:700}
+.npx .npx-cta .btn--white:hover{background:var(--mint);color:var(--forest);border-color:var(--mint)}
+.npx .npx-cta .btn--ghost{color:#fff;border-color:#fff;background:transparent}
+.npx .npx-cta .btn--ghost:hover{background:#fff;color:var(--forest)}
+/* Shorter header label should stay on one line */
 .mobile-bar .btn--primary{white-space:normal;line-height:1.15;text-align:center}
 .nav-mobile-cta .btn{white-space:normal;line-height:1.15;text-align:center}
-@media (min-width:980px) and (max-width:1359px){
-  .header-cta .btn{white-space:normal;line-height:1.15;text-align:center;max-width:11.5rem}
+@media (min-width:980px){
+  .header-cta .btn{white-space:nowrap}
 }

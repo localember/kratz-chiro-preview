@@ -56,7 +56,9 @@ FAQG=json.load(open(f'{CAT}/faq-general.json'))
 INS='We have plans available for all kinds of insurance.'
 NP_SPECIAL='$87.00'
 FIRST_MIN='30 minutes'
-CTA_LABEL='Claim $87 New Patient Special'
+SPECIAL_NAME='$87 New Patient Special'
+CTA_LABEL=SPECIAL_NAME  # most buttons and links
+CTA_CLAIM='Claim $87 New Patient Special'  # homepage hero only
 CTA_HREF='/request-appointment/'
 HOME_SERVICES=['chiropractic','pediatric','prenatal','wellness-care','massage-therapy','nutrition']  # original homepage set; supplementation stays on /services/ and in the nav
 # Testimonials and bio: word for word from Dr. Kratz (double spaces and missing periods kept). Never edit.
@@ -71,7 +73,7 @@ VERB='style="white-space:pre-wrap"'  # keeps the double spaces visible
 def bio_html(): return ''.join(f'<p {VERB}>{E(p)}</p>' for p in BIO)
 def tcards(): return ''.join(f'<div class="tcard"><p {VERB}>{E(q)}</p><p class="who">{E(w)}</p></div>' for q,w in TESTIMONIALS)
 def offer_html(extra=''):
-    return f'<div class="np-offer{extra}"><p><strong>New Patient special: {NP_SPECIAL}</strong></p><p>Your first visit takes about {FIRST_MIN}.</p><p>{INS}</p></div>'
+    return f'<div class="np-offer{extra}"><p><strong>{SPECIAL_NAME}</strong></p><p>Your first visit takes about {FIRST_MIN}.</p><p>{INS}</p></div>'
 
 def _walk(o,fn):
     if isinstance(o,dict):
@@ -379,7 +381,7 @@ HOME_FAQ=[
  {"q":"What is a Gonstead chiropractor?","a":"A Gonstead chiropractor uses the full spine analysis developed by Dr. Clarence Gonstead in Mt. Horeb, Wisconsin. Before adjusting, Dr. Kratz looks at five things: visualization, instrumentation, palpation, X-ray and your symptoms. The goal is to find the specific segment that needs care and adjust it by hand, leaving the rest alone."},
  {"q":"What are the office hours?","a":"The office is open Monday from 9:00 am to 6:00 pm, Tuesday and Friday from 9:00 am to 12:00 pm, and Wednesday and Thursday from 2:00 pm to 6:00 pm. We are closed on weekends. Hours can change around holidays, so call (608) 291-1037 if you are unsure."},
  {"q":"Do I need a referral to see a chiropractor in Oregon, WI?","a":"No referral is needed to book a first visit at Kratz Family Chiropractic. You can call the office directly to schedule. We have plans available for all kinds of insurance. We will go over cost with you before care starts, so there are no surprises later."},
- {"q":"What happens at a first Gonstead visit?","a":"Your first visit starts with a conversation about your health history and what brought you in. Dr. Kratz then does a full Gonstead analysis and, in most cases, your first adjustment. You will leave knowing what was found and what happens next. Plan on about 30 minutes. The New Patient special is $87.00."},
+ {"q":"What happens at a first Gonstead visit?","a":"Your first visit starts with a conversation about your health history and what brought you in. Dr. Kratz then does a full Gonstead analysis and, in most cases, your first adjustment. You will leave knowing what was found and what happens next. Plan on about 30 minutes. The $87 New Patient Special covers that visit."},
  {"q":"Does Kratz Family Chiropractic see children and families?","a":"Yes. Kratz Family Chiropractic sees patients of all ages, from kids to grandparents. The Gonstead method adjusts by hand, and the force is matched to the person on the table, so care for a child looks very different from care for an adult. Parents are welcome to stay in the room."},
 ]
 for f in HOME_FAQ:
@@ -400,7 +402,7 @@ def home():
   <p class="eyebrow">Full spine Gonstead practitioner</p>
   <h1>Chiropractor <span class="accent">in Oregon, WI</span></h1>
   <p class="lead">Specific, hands-on chiropractic care for the whole family. {B['doc_short']} finds the exact source of the problem with a full Gonstead analysis, then adjusts only what needs it.</p>
-  <p class="btn-row"><a class="btn btn--primary" href="{U('/request-appointment/')}">{CTA_LABEL}</a> <a class="btn btn--ghost" href="tel:{B['tel']}">Call {B['phone']}</a></p>
+  <p class="btn-row"><a class="btn btn--primary" href="{U('/request-appointment/')}">{CTA_CLAIM}</a> <a class="btn btn--ghost" href="tel:{B['tel']}">Call {B['phone']}</a></p>
   <p class="np-link"><a href="{U('/first-visit/')}">New patient experience: what to expect at your first visit</a></p>
   <div class="k-answer"><span class="lbl">In short</span><p>Kratz Family Chiropractic is a Gonstead chiropractic office at {E(B['addr_full'])}. {B['doctor']}, D.C., has been in practice for 25 years and uses the full Gonstead analysis to find where your spine needs care, then adjusts by hand. Patients of all ages come from Oregon and nearby towns.</p></div>
   <ul class="k-facts"><li>25 years in practice</li><li>Full spine Gonstead analysis</li><li>Care for all ages</li><li>Oregon, WI office</li></ul>
@@ -450,8 +452,7 @@ def home():
     <a class="step" href="{U('/second-visit/')}"><b>2. Second visit</b><span>Your report of findings, in plain language, and a recommended plan.</span></a>
     <a class="step" href="{U('/follow-up-visit/')}"><b>3. Follow-up visits</b><span>Short, specific visits that re-check and adjust what needs it.</span></a>
   </div>
-  {offer_html(' np-offer--dark')}
-  <p class="btn-row" style="justify-content:center"><a class="btn btn--white" href="{U('/request-appointment/')}">{CTA_LABEL}</a> <a class="btn btn--ghost" href="tel:{B['tel']}">Call {B['phone']}</a></p>
+  <p class="btn-row npx-cta" style="justify-content:center"><a class="btn btn--white" href="{U('/request-appointment/')}">{CTA_LABEL}</a> <a class="btn btn--ghost" href="tel:{B['tel']}">Call {B['phone']}</a></p>
 </div></div></section>
 
 <section class="band band--mint"><div class="wrap center">
@@ -551,7 +552,7 @@ def contact():
 <p class="btn-row" style="margin-top:1rem"><a class="btn btn--primary" href="{MAPS}" target="_blank" rel="noopener">Get directions</a></p>
 <iframe class="map" src="{EMBED}" title="Map to Kratz Family Chiropractic" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
 <p style="margin-top:.8rem"><img src="{U('/assets/images/office-exterior.jpg')}" alt="The building at 600 Pleasant Oak Dr in Oregon, WI" loading="lazy" style="border-radius:14px;max-height:320px;width:100%;object-fit:cover"></p></div>
-<div><div class="request-callout"><h2>New patient?</h2><p>Use the short appointment request form and the office will contact you after you submit to set up your first visit. Your first visit takes about {FIRST_MIN}, and the New Patient special is {NP_SPECIAL}. {INS}</p><a class="btn btn--primary" href="{U('/request-appointment/')}">{CTA_LABEL}</a></div>
+<div><div class="request-callout"><h2>New patient?</h2><p>Use the short appointment request form and the office will contact you after you submit to set up your first visit. Your first visit takes about {FIRST_MIN}. The {SPECIAL_NAME} is available for that visit. {INS}</p><a class="btn btn--primary" href="{U('/request-appointment/')}">{CTA_LABEL}</a></div>
 <h2>Send us a message</h2>
 <p>Send a short note and the office will contact you after you submit. There is no online scheduling, and our phone line is for calls only.</p>
 <!-- Lead form config (inactive on preview): submissions go by email to doug@kratzfamilychiro.com (staff emails can be added later). See _build/form-config.json -->
@@ -567,7 +568,7 @@ def contact():
 
 def request_appt():
     body=f'''<section class="band band--paper"><div class="wrap split" style="align-items:start">
-<div id="request"><h2>Claim the $87 New Patient Special</h2>
+<div id="request"><h2>Request your first visit</h2>
 <p>Fill out this short form and the office will contact you after you submit to find a time that works. There is no online scheduling; this sends a request and does not book a time on its own.</p>
 {offer_html()}
 <!-- Lead form config (inactive on preview): submissions go by email to doug@kratzfamilychiro.com (staff emails can be added later). See _build/form-config.json -->
@@ -584,7 +585,7 @@ def request_appt():
 <h3>Office hours</h3>{hours_list()}
 <p style="margin-top:1rem"><a href="{U('/first-visit/')}">What to expect at your first visit</a></p></div>
 </div></section>'''
-    simple('/request-appointment/','Claim the $87 New Patient Special | Kratz Family Chiropractic, Oregon, WI','Claim the $87 New Patient special at Kratz Family Chiropractic in Oregon, WI. Send a short request and the office will contact you.','Claim the $87 New Patient Special','New patients',body,[('Home','/'),('Claim the $87 New Patient Special','/request-appointment/')])
+    simple('/request-appointment/','$87 New Patient Special | Kratz Family Chiropractic, Oregon, WI','The $87 New Patient Special at Kratz Family Chiropractic in Oregon, WI. Send a short request and the office will contact you.','$87 New Patient Special','New patients',body,[('Home','/'),('$87 New Patient Special','/request-appointment/')])
 
 def legal():
     LEGAL=json.load(open(os.path.join(HERE,'legal-src.json')))['pages']
@@ -613,7 +614,7 @@ def extras():
     open(os.path.join(OUT,'sitemap.xml'),'w').write(sm)
     hrs='; '.join(f"{d[0]} {hours_txt(d)}" for d in HOURS)
     L=[f"# {B['name']}","",f"> Full spine Gonstead chiropractor in Oregon, Wisconsin. {B['doctor']}, D.C. (Dr. Douglas Kratz). Design preview, not the live site.","",
-       "## Practice facts",f"- Address: {B['addr_full']}",f"- Phone: {B['phone']}",f"- Hours: {hrs}","- Years in practice: 25",f"- Claim $87 New Patient Special: {ORIGIN+U('/request-appointment/')}","- Technique: Gonstead (full spine analysis, including visualization, instrumentation, palpation, X-ray and symptoms)",f"- First visit: about {FIRST_MIN}. New Patient special: {NP_SPECIAL}",f"- Insurance: {INS}","- Appointments: call (call only, no texting) or send the short request form; no online scheduling","- Areas served: Oregon, Stoughton, Fitchburg, Brooklyn and the south Madison area",f"- Facebook: {B['facebook']}","",
+       "## Practice facts",f"- Address: {B['addr_full']}",f"- Phone: {B['phone']}",f"- Hours: {hrs}","- Years in practice: 25",f"- {SPECIAL_NAME}: {ORIGIN+U('/request-appointment/')}","- Technique: Gonstead (full spine analysis, including visualization, instrumentation, palpation, X-ray and symptoms)",f"- First visit: about {FIRST_MIN}. {SPECIAL_NAME}.",f"- Insurance: {INS}","- Appointments: call (call only, no texting) or send the short request form; no online scheduling","- Areas served: Oregon, Stoughton, Fitchburg, Brooklyn and the south Madison area",f"- Facebook: {B['facebook']}","",
        "## Key pages"]
     for p in ['/','/us/','/gonstead-system/','/founder-of-gonstead/','/first-visit/','/second-visit/','/follow-up-visit/','/services/','/conditions/','/faqs/','/request-appointment/','/contact-us/']:
         L.append(f"- [{PAGES[p][0]}]({ORIGIN+U(p)}): {PAGES[p][1]}")
