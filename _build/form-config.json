@@ -1,5 +1,5 @@
 {
-  "_note": "Preview only. Forms on localember.github.io are inactive (submit is intercepted in assets/site.js). No online booking or scheduling; the office contacts people after they submit. Wire these on the live build.",
+  "_note": "GitHub Pages preview forms stay inactive (data-preview-inactive). The live build posts to /lead.php, which emails doug@kratzfamilychiro.com from noreply@localember.com through Brevo. No online scheduling. The phone is for calls only. Staff emails can be added later.",
   "forms": {
     "request-appointment": {
       "page": "/request-appointment/",

@@ -579,8 +579,9 @@ def contact():
 <div><div class="request-callout"><h2>New patient?</h2><p>Use the short appointment request form and the office will contact you after you submit to set up your first visit. Your first visit takes about {FIRST_MIN}. The {SPECIAL_NAME} is available for that visit. {INS}</p><a class="btn btn--primary" href="{U('/request-appointment/')}">{CTA_LABEL}</a></div>
 <h2>Send us a message</h2>
 <p>Send a short note and the office will contact you after you submit. There is no online scheduling, and our phone line is for calls only.</p>
-<!-- Lead form config (inactive on preview): submissions go by email to doug@kratzfamilychiro.com (staff emails can be added later). See _build/form-config.json -->
-<form class="js-contact" action="#" method="post" data-preview-inactive="true" data-form="contact">
+<!-- Submissions go by email to doug@kratzfamilychiro.com. Staff emails can be added later. See _build/form-config.json -->
+<form class="js-contact" action="{('/lead.php' if LIVE else '#')}" method="post" {('' if LIVE else 'data-preview-inactive="true" ')}data-form="contact">
+{('' if not LIVE else '<input type="hidden" name="form" value="contact"><input type="hidden" name="loaded" value=""><div class="hp" aria-hidden="true"><label for="c-website">Website</label><input id="c-website" name="website_url" tabindex="-1" autocomplete="off"></div>')}
 <div><label for="f-name">Name</label><input id="f-name" name="name" autocomplete="name" required></div>
 <div><label for="f-phone">Phone</label><input id="f-phone" name="phone" type="tel" autocomplete="tel"></div>
 <div><label for="f-email">Email</label><input id="f-email" name="email" type="email" autocomplete="email" required></div>
@@ -595,8 +596,9 @@ def request_appt():
 <div id="request"><h2>Request your first visit</h2>
 <p>Fill out this short form and the office will contact you after you submit to find a time that works. There is no online scheduling; this sends a request and does not book a time on its own.</p>
 {offer_html()}
-<!-- Lead form config (inactive on preview): submissions go by email to doug@kratzfamilychiro.com (staff emails can be added later). See _build/form-config.json -->
-<form class="js-contact" action="#" method="post" data-preview-inactive="true" data-form="request-appointment">
+<!-- Submissions go by email to doug@kratzfamilychiro.com. Staff emails can be added later. See _build/form-config.json -->
+<form class="js-contact" action="{('/lead.php' if LIVE else '#')}" method="post" {('' if LIVE else 'data-preview-inactive="true" ')}data-form="request-appointment">
+{('' if not LIVE else '<input type="hidden" name="form" value="request-appointment"><input type="hidden" name="loaded" value=""><div class="hp" aria-hidden="true"><label for="r-website">Website</label><input id="r-website" name="website_url" tabindex="-1" autocomplete="off"></div>')}
 <div><label for="r-name">Name</label><input id="r-name" name="name" autocomplete="name" required></div>
 <div><label for="r-phone">Phone</label><input id="r-phone" name="phone" type="tel" autocomplete="tel" required></div>
 <div><label for="r-email">Email</label><input id="r-email" name="email" type="email" autocomplete="email"></div>
@@ -638,7 +640,7 @@ def extras():
     sm='<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n'+''.join(f'  <url><loc>{ORIGIN+U(p)}</loc></url>\n' for p in urls)+'</urlset>\n'
     open(os.path.join(OUT,'sitemap.xml'),'w').write(sm)
     hrs='; '.join(f"{d[0]} {hours_txt(d)}" for d in HOURS)
-    preview_line=' The site is not indexed yet, and the request forms are not sending.' if LIVE else ' Design preview, not the live site.'
+    preview_line=' The site is not indexed yet. Request forms email the office. There is no online scheduling, and the phone is for calls only.' if LIVE else ' Design preview, not the live site.'
     L=[f"# {B['name']}","",f"> Full spine Gonstead chiropractor in Oregon, Wisconsin. {B['doctor']}, D.C. (Dr. Douglas Kratz).{preview_line}","",
        "## Practice facts",f"- Address: {B['addr_full']}",f"- Phone: {B['phone']}",f"- Hours: {hrs}","- Years in practice: 25",f"- {SPECIAL_NAME}: {ORIGIN+U('/request-appointment/')}","- Technique: Gonstead (full spine analysis, including visualization, instrumentation, palpation, X-ray and symptoms)",f"- First visit: about {FIRST_MIN}. {SPECIAL_NAME}.",f"- Insurance: {INS}","- Appointments: call (call only, no texting) or send the short request form; no online scheduling","- Areas served: Oregon, Stoughton, Fitchburg, Brooklyn and the south Madison area",f"- Facebook: {B['facebook']}","",
        "## Key pages"]
@@ -649,6 +651,10 @@ def extras():
     open(os.path.join(OUT,'llms.txt'),'w').write('\n'.join(L)+'\n')
     if LIVE:
         open(os.path.join(OUT,'build-id.txt'),'w').write('LE-BUILD-ID:'+BUILD_MARKER+'\n')
+        shutil_lead=os.path.join(HERE,'lead.php')
+        if os.path.isfile(shutil_lead):
+            import shutil
+            shutil.copy(shutil_lead, os.path.join(OUT,'lead.php'))
         return
     open(os.path.join(OUT,'README.md'),'w').write(f"""# Kratz Family Chiropractic (design preview)
 

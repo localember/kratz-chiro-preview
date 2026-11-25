@@ -63,13 +63,57 @@
     }
   });
 
+  var loadedAt = Date.now();
   document.querySelectorAll("form.js-contact").forEach(function (form) {
+    var stamp = form.querySelector('input[name="loaded"]');
+    if (stamp) stamp.value = String(loadedAt);
     form.addEventListener("submit", function (e) {
       e.preventDefault();
       var status = form.querySelector(".form-status");
-      if (status) {
-        status.textContent = "This is a design preview. The form is not sending messages yet.";
+      if (form.getAttribute("data-preview-inactive") === "true") {
+        if (status) {
+          status.textContent = "This is a design preview. The form is not sending messages yet.";
+        }
+        return;
       }
+      if (form.getAttribute("data-sending") === "true") return;
+      var btn = form.querySelector('button[type="submit"]');
+      var label = btn ? btn.textContent : "";
+      form.setAttribute("data-sending", "true");
+      if (btn) {
+        btn.disabled = true;
+        btn.textContent = "Sending...";
+      }
+      if (status) status.textContent = "";
+      fetch(form.getAttribute("action") || "/lead.php", {
+        method: "POST",
+        body: new URLSearchParams(new FormData(form)),
+        headers: { "Accept": "application/json" }
+      }).then(function (r) {
+        return r.json().then(function (data) {
+          return { httpOk: r.ok, data: data };
+        }, function () {
+          throw new Error("bad json");
+        });
+      }).then(function (res) {
+        if (!res.httpOk || !res.data || res.data.ok !== true) {
+          throw new Error((res.data && res.data.message) || "rejected");
+        }
+        if (status) status.textContent = res.data.message || "Sent. The office will contact you.";
+        form.reset();
+        var again = form.querySelector('input[name="loaded"]');
+        if (again) again.value = String(loadedAt);
+      }).catch(function () {
+        if (status) {
+          status.textContent = "Something went wrong sending that. Please call the office at (608) 291-1037.";
+        }
+      }).then(function () {
+        form.removeAttribute("data-sending");
+        if (btn) {
+          btn.disabled = false;
+          btn.textContent = label;
+        }
+      });
     });
   });
   // Rotating quotes on the home page. Pauses on hover and focus,
