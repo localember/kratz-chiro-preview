@@ -4,11 +4,15 @@ Catalog copy is read from localember/localember tools/bd-generator/catalog.
 Run: python3 _build/build.py  (writes into ./site)"""
 import json, os, re, html, sys, datetime
 HERE=os.path.dirname(os.path.abspath(__file__))
-OUT=os.path.dirname(HERE)  # repo root
+# LE_LIVE=1 builds the production host copy: domain root, www canonical, no preview banner.
+# noindex and inactive forms stay on until their own rows. Default (unset) is the GitHub Pages preview.
+LIVE=os.environ.get('LE_LIVE')=='1'
+OUT=os.environ.get('LE_OUT') or os.path.dirname(HERE)
 CAT=os.environ.get('LE_CATALOG','/workspace/le/tools/bd-generator/catalog')
-BASE='/kratz-chiro-preview'
-ORIGIN='https://localember.github.io'
+BASE=os.environ.get('LE_BASE', '' if LIVE else '/kratz-chiro-preview')
+ORIGIN=os.environ.get('LE_ORIGIN', 'https://www.kratzfamilychiro.com' if LIVE else 'https://localember.github.io')
 SITE=ORIGIN+BASE+'/'
+BUILD_MARKER='kratz-2026-11-25-hosting-deploy'
 E=html.escape
 
 B={ 'name':'Kratz Family Chiropractic','short':'Kratz Family Chiropractic',
@@ -152,6 +156,25 @@ def rel_slug(it):
     return s if s in BUILT else None
 
 # ---------- chrome ----------
+# Production only. The design preview stays untagged. Search Console is a separate row.
+GTM_ID='GTM-TH5K7WKF'
+def gtm_head():
+    if not LIVE: return ''
+    return (
+        '<!-- Google Tag Manager (deferred to load) -->\n'
+        "<script>(function(w,d,s,l,i){w[l]=w[l]||[];function go(){"
+        "w[l].push({'gtm.start':new Date().getTime(),event:'gtm.js'});"
+        "var f=d.getElementsByTagName(s)[0],j=d.createElement(s),"
+        "dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src="
+        "'https://www.googletagmanager.com/gtm.js?id='+i+dl;"
+        "f.parentNode.insertBefore(j,f);}"
+        "if(d.readyState==='complete'){go()}else{w.addEventListener('load',go)}})"
+        f"(window,document,'script','dataLayer','{GTM_ID}');</script>\n"
+        '<!-- End Google Tag Manager -->\n')
+def gtm_body():
+    if not LIVE: return ''
+    return ('<noscript><iframe src="https://www.googletagmanager.com/ns.html?id='
+            + GTM_ID + '" height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>\n')
 def head(title,desc,path,schema,og_img='images/dr-kratz-portrait.jpg'):
     can=ORIGIN+U(path)
     return f'''<!DOCTYPE html>
@@ -160,6 +183,7 @@ def head(title,desc,path,schema,og_img='images/dr-kratz-portrait.jpg'):
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="robots" content="noindex,nofollow">
+  {('<!-- LE-BUILD-ID:'+BUILD_MARKER+' -->') if LIVE else ''}
   <title>{E(title)}</title>
   <meta name="description" content="{E(desc)}">
   <link rel="canonical" href="{can}">
@@ -171,7 +195,7 @@ def head(title,desc,path,schema,og_img='images/dr-kratz-portrait.jpg'):
   <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="{U('/assets/styles.css')}">
   <script type="application/ld+json">{json.dumps(schema,indent=1,ensure_ascii=False)}</script>
-</head>
+{gtm_head()}</head>
 '''
 def navlink(slug,cur): 
     a=' aria-current="page"' if cur==f'/{slug}/' else ''
@@ -179,8 +203,8 @@ def navlink(slug,cur):
 def header(cur):
     col=lambda h,L:f'<div class="mega-col"><h3>{h}</h3><ul class="sub" style="display:block;padding:0">'+''.join(navlink(s,cur) for s in L)+'</ul></div>'
     return f'''<body>
-<a class="skip" href="#main">Skip to content</a>
-<div class="preview-banner">Design preview, not live <span>This site is not the live Kratz Family Chiropractic website and is hidden from search.</span></div>
+{gtm_body()}<a class="skip" href="#main">Skip to content</a>
+{'' if LIVE else '<div class="preview-banner">Design preview, not live <span>This site is not the live Kratz Family Chiropractic website and is hidden from search.</span></div>'}
 <div class="topbar"><div class="wrap">
   <a href="{MAPS}" target="_blank" rel="noopener">{E(B['addr_full'])}</a>
   <div class="topbar-links"><a href="tel:{B['tel']}">Call {B['phone']}</a></div>
@@ -224,7 +248,7 @@ def footer():
       <p style="margin-top:1rem"><a class="btn btn--white" href="tel:{B['tel']}">Call {B['phone']}</a></p></div>
   </div>
   <nav class="legal-nav" aria-label="Legal">{''.join(f'<a href="{U("/"+s+"/")}">{t}</a>' for s,t in legal)}</nav>
-  <p class="copy">&copy; {yr} Kratz Family Chiropractic. Gonstead chiropractor in Oregon, WI. Design preview by Grow Gonstead.</p>
+  <p class="copy">&copy; {yr} Kratz Family Chiropractic. Gonstead chiropractor in Oregon, WI.{'' if LIVE else ' Design preview by Grow Gonstead.'}</p>
 </div></footer>
 <div class="mobile-bar"><a class="btn btn--primary" href="{U('/request-appointment/')}">{CTA_LABEL}</a><a class="btn btn--ghost" href="tel:{B['tel']}">Call</a></div>
 <script src="{U('/assets/site.js')}" defer></script>
@@ -592,7 +616,8 @@ def legal():
     pages=[('privacy-policy','Privacy Policy'),('terms-of-service','Terms of Service'),('healthcare-disclaimer','Healthcare Disclaimer'),('good-faith-estimate','Good Faith Estimate'),('hipaa-privacy-practices','HIPAA Notice of Privacy Practices'),('accessibility-statement','Accessibility Statement'),('anti-discrimination','Anti-Discrimination Notice')]
     for slug,name in pages:
         prose=LEGAL[slug]
-        for a,b in [('Ortloff Family Chiropractic',B['name']),('https://ortlofffamilychiropractic.com','https://kratzfamilychiro.com'),('Luke@ortlofffamilychiropractic.com',B['lead_email']),
+        legal_origin='https://www.kratzfamilychiro.com' if LIVE else 'https://kratzfamilychiro.com'
+        for a,b in [('Ortloff Family Chiropractic',B['name']),('https://ortlofffamilychiropractic.com',legal_origin),('Luke@ortlofffamilychiropractic.com',B['lead_email']),
                     ('35544 Sand Pointe Dr. Suite C',B['street']),('Crosslake, MN 56442',f"Oregon, WI 53575"),('(218) 866-5436',B['phone']),('+12188665436',B['tel']),('State of MN','State of Wisconsin')]:
             prose=prose.replace(a,b)
         bad=re.findall(r'Ortloff|Luke|Crosslake|Minnesota|\bMN\b|218',prose)
@@ -613,7 +638,8 @@ def extras():
     sm='<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n'+''.join(f'  <url><loc>{ORIGIN+U(p)}</loc></url>\n' for p in urls)+'</urlset>\n'
     open(os.path.join(OUT,'sitemap.xml'),'w').write(sm)
     hrs='; '.join(f"{d[0]} {hours_txt(d)}" for d in HOURS)
-    L=[f"# {B['name']}","",f"> Full spine Gonstead chiropractor in Oregon, Wisconsin. {B['doctor']}, D.C. (Dr. Douglas Kratz). Design preview, not the live site.","",
+    preview_line=' The site is not indexed yet, and the request forms are not sending.' if LIVE else ' Design preview, not the live site.'
+    L=[f"# {B['name']}","",f"> Full spine Gonstead chiropractor in Oregon, Wisconsin. {B['doctor']}, D.C. (Dr. Douglas Kratz).{preview_line}","",
        "## Practice facts",f"- Address: {B['addr_full']}",f"- Phone: {B['phone']}",f"- Hours: {hrs}","- Years in practice: 25",f"- {SPECIAL_NAME}: {ORIGIN+U('/request-appointment/')}","- Technique: Gonstead (full spine analysis, including visualization, instrumentation, palpation, X-ray and symptoms)",f"- First visit: about {FIRST_MIN}. {SPECIAL_NAME}.",f"- Insurance: {INS}","- Appointments: call (call only, no texting) or send the short request form; no online scheduling","- Areas served: Oregon, Stoughton, Fitchburg, Brooklyn and the south Madison area",f"- Facebook: {B['facebook']}","",
        "## Key pages"]
     for p in ['/','/us/','/gonstead-system/','/founder-of-gonstead/','/first-visit/','/second-visit/','/follow-up-visit/','/services/','/conditions/','/faqs/','/request-appointment/','/contact-us/']:
@@ -621,6 +647,9 @@ def extras():
     L+=["","## Services"]+[f"- [{NAV_NAMES[s]}]({ORIGIN+U('/'+s+'/')})" for s in SERVICES]
     L+=["","## Conditions"]+[f"- [{NAV_NAMES[s]}]({ORIGIN+U('/'+s+'/')})" for s in CONDITIONS]
     open(os.path.join(OUT,'llms.txt'),'w').write('\n'.join(L)+'\n')
+    if LIVE:
+        open(os.path.join(OUT,'build-id.txt'),'w').write('LE-BUILD-ID:'+BUILD_MARKER+'\n')
+        return
     open(os.path.join(OUT,'README.md'),'w').write(f"""# Kratz Family Chiropractic (design preview)
 
 This repository is a **design preview only**. It is not the live Kratz Family Chiropractic website.
